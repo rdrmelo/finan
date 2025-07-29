@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Controle Financeiro (Modo Local)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        .card:hover { transform: translateY(-5px); }
+        .nav-btn { transition: background-color 0.2s, color 0.2s; }
+        .progress-bar-fill { transition: width 0.5s ease-in-out; }
+
+        /* NOVO: Estilos para botões principais */
+        .btn-primary {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* indigo-700 */
+        }
+        .btn-danger { /* CORRIGIDO: Classe adicionada */
+            background-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+
+        /* MODAL STYLES */
+        .modal-backdrop { transition: opacity 0.2s ease-in-out; }
+        .modal-content {
+            transition: transform 0.2s ease-in-out;
+            transform: scale(0.95);
+        }
+        .modal-backdrop:not(.hidden) { opacity: 1; }
+        .modal-backdrop:not(.hidden) .modal-content { transform: scale(1); }
+        /* Adicione estas regras ao seu bloco <style> */
+
+        /* NOVO: Estilo para o botão de navegação ativo */
+        .nav-btn.active {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+        }
+
+        /* Opcional, mas recomendado: Efeito hover para botões inativos */
+        .nav-btn:not(.active):hover {
+            background-color: #e5e7eb; /* gray-200 */
+        }
+        .dark .nav-btn:not(.active):hover {
+            background-color: #374151; /* gray-700 */
+        }
+    </style>
+</head>
+<body class="antialiased bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100">Dashboard Financeiro</h1>
+                <p class="text-gray-500 dark:text-gray-400 mt-1">Sua vida financeira em um só lugar. (Modo Local)</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                 <button id="settings-btn" title="Configurações" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.332.183-.582.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 0 1-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 0 1-.26-1.431l1.296-2.247a1.125 1.125 0 0 1 1.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.213-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                </button>
+                <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
+                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zm-4.95-4.536a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zM1.464 4.536A1 1 0 013.88 3.12l.707.707a1 1 0 11-1.414 1.414L1.464 4.536z"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <nav class="mb-8 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-sm flex space-x-2">
+            <button id="nav-dashboard" class="nav-btn flex-1 py-2 px-4 rounded-md font-semibold active">Dashboard</button>
+            <button id="nav-goals" class="nav-btn flex-1 py-2 px-4 rounded-md font-semibold">Meus Cofrinhos</button>
+        </nav>
+
+        <div id="dashboard-page">
+            <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card bg-white dark:bg-gray-800 p-6 flex items-center col-span-1 md:col-span-2 lg:col-span-1 shadow-sm hover:shadow-lg">
+                    <div><h2 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Saldo Atual</h2><p id="balance" class="text-3xl font-bold text-gray-800 dark:text-gray-100">R$ 0,00</p></div>
+                </div>
+                <div class="card bg-white dark:bg-gray-800 p-6 flex items-center col-span-1 md:col-span-1 shadow-sm hover:shadow-lg">
+                    <div><h2 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Receitas Totais</h2><p id="total-income" class="text-3xl font-bold text-green-600">R$ 0,00</p></div>
+                </div>
+                <div class="card bg-white dark:bg-gray-800 p-6 flex items-center col-span-1 md:col-span-1 shadow-sm hover:shadow-lg">
+                    <div><h2 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Despesas Totais</h2><p id="total-expense" class="text-3xl font-bold text-red-600">R$ 0,00</p></div>
+                </div>
+                <div class="col-span-1 md:col-span-2 lg:col-span-1 flex flex-col md:flex-row lg:flex-col gap-4 justify-center">
+                    <button id="add-income-btn" class="w-full py-2 px-4 rounded-lg font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors">Adicionar Receita</button>
+                    <button id="add-expense-btn" class="w-full py-2 px-4 rounded-lg font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors">Adicionar Despesa</button>
+                    <button id="manage-recurring-btn" class="w-full py-2 px-4 rounded-lg font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors">Gerenciar Recorrentes</button>
+                    <button id="generate-report-btn" class="w-full py-2 px-4 rounded-lg font-semibold text-white bg-gray-700 hover:bg-gray-800 transition-colors">Gerar Relatório</button>
+                </div>
+                <div class="card bg-white dark:bg-gray-800 p-6 col-span-1 md:col-span-2 lg:col-span-2 shadow-sm hover:shadow-lg">
+                    <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Despesas por Categoria</h3>
+                    <div class="h-64 md:h-80"><canvas id="expenseChart"></canvas></div>
+                </div>
+                <div class="card bg-white dark:bg-gray-800 p-6 col-span-1 md:col-span-2 shadow-sm hover:shadow-lg">
+                    <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Histórico de Saldo</h3>
+                    <div class="h-64 md:h-80"><canvas id="balanceHistoryChart"></canvas></div>
+                </div>
+                <div class="card bg-white dark:bg-gray-800 p-6 col-span-1 md:col-span-2 lg:col-span-4 shadow-sm hover:shadow-lg">
+                    <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Transações Recentes</h3>
+                    <div id="transactions-list" class="space-y-4 max-h-96 overflow-y-auto pr-2"><p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma transação encontrada.</p></div>
+                </div>
+            </main>
+        </div>
+
+        <div id="goals-page" class="hidden">
+             <header class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Meus Cofrinhos</h2>
+                <button id="add-goal-btn" class="py-2 px-4 rounded-lg font-semibold btn-primary">Adicionar Novo Cofrinho</button>
+            </header>
+            <div id="goals-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+    </div>
+
+    <div id="transaction-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 id="modal-title" class="text-2xl font-bold mb-6">Adicionar Transação</h2>
+            <form id="transaction-form">
+                <input type="hidden" id="transaction-id"><input type="hidden" id="transaction-type" value="expense">
+                <div class="mb-4"><label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label><input type="text" id="description" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></div>
+                <div class="mb-4"><label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Valor (R$)</label><input type="number" id="amount" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></div>
+                <div class="mb-4"><label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label><div class="flex items-center space-x-2"><input type="text" id="category" list="category-suggestions" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required><button type="button" id="suggest-category-btn" title="Sugerir Categoria com IA" class="mt-1 px-3 py-2 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">✨</button></div><datalist id="category-suggestions"></datalist></div>
+                <div class="mb-6"><label for="date" id="date-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data</label><input type="date" id="date" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></div>
+                <div id="options-section" class="space-y-4 mb-6 border-t border-gray-200 dark:border-gray-700 pt-4"><div id="installments-section"><div class="flex items-center"><input type="checkbox" id="is-installment" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"><label for="is-installment" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Compra parcelada?</label></div><div id="installments-count-container" class="mt-4 hidden"><label for="installments-count" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Número de parcelas</label><input type="number" id="installments-count" min="2" max="72" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm"></div></div><div id="recurring-section"><div class="flex items-center"><input type="checkbox" id="is-recurring" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"><label for="is-recurring" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">É uma despesa recorrente?</label></div></div></div>
+                <div class="flex justify-end space-x-4"><button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button><button type="submit" id="save-btn" class="px-4 py-2 btn-primary rounded-md disabled:bg-indigo-300 disabled:cursor-not-allowed">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="delete-confirm-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 id="delete-modal-title" class="text-2xl font-bold mb-4">Confirmar Exclusão</h2>
+            <p id="delete-modal-text" class="text-gray-600 dark:text-gray-400 mb-6">Tem certeza que deseja excluir?</p>
+            <div class="flex justify-end space-x-4"><button type="button" id="cancel-delete-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button><button type="button" id="confirm-delete-btn" class="px-4 py-2 btn-danger rounded-md">Excluir</button></div>
+        </div>
+    </div>
+    <div id="recurring-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-lg">
+            <h2 class="text-2xl font-bold mb-6">Gerenciar Despesas Recorrentes</h2>
+            <div id="recurring-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+            <div class="flex justify-end mt-6"><button type="button" id="close-recurring-modal-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Fechar</button></div>
+        </div>
+    </div>
+    <div id="goal-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 id="goal-modal-title" class="text-2xl font-bold mb-6">Novo Cofrinho</h2>
+            <form id="goal-form">
+                <input type="hidden" id="goal-id"><div class="mb-4"><label for="goal-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome da Meta</label><input type="text" id="goal-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm" required></div><div class="mb-4"><label for="goal-target" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Valor da Meta (R$)</label><input type="number" id="goal-target" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm" required></div><div class="mb-4"><button type="button" id="create-plan-btn" class="w-full py-2 px-4 rounded-lg font-semibold text-white bg-indigo-500 hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">✨ Criar Plano de Ação</button></div><div id="action-plan-display" class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-md hidden"></div>
+                <div class="flex justify-end space-x-4"><button type="button" id="cancel-goal-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button><button type="submit" class="px-4 py-2 btn-primary rounded-md">Salvar Cofrinho</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="add-funds-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 id="add-funds-modal-title" class="text-2xl font-bold mb-6">Adicionar Dinheiro</h2>
+            <form id="add-funds-form">
+                <input type="hidden" id="add-funds-goal-id"><div class="mb-6"><label for="add-funds-amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Valor a Adicionar (R$)</label><input type="number" id="add-funds-amount" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm" required></div>
+                <div class="flex justify-end space-x-4"><button type="button" id="cancel-add-funds-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button><button type="submit" class="px-4 py-2 btn-primary rounded-md">Adicionar</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="report-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6">Gerar Relatório de Despesas</h2>
+            <form id="report-form"><div class="mb-4"><label for="report-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Relatório</label><select id="report-type" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm"><option value="monthly">Mensal</option><option value="annual">Anual</option></select></div><div id="report-month-container" class="mb-4"><label for="report-month" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mês</label><input type="month" id="report-month" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm"></div><div id="report-year-container" class="mb-4 hidden"><label for="report-year" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ano</label><input type="number" id="report-year" placeholder="Ex: 2025" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm"></div><div class="flex items-center mt-4"><input type="checkbox" id="include-ai-analysis" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"><label for="include-ai-analysis" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Incluir análise com IA</label></div><div class="flex justify-end space-x-4 mt-6"><button type="button" id="cancel-report-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button><button type="submit" id="generate-pdf-btn" class="px-4 py-2 btn-primary rounded-md disabled:bg-indigo-300 disabled:cursor-not-allowed">Gerar PDF</button></div></form>
+        </div>
+    </div>
+    <div id="view-plan-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-lg">
+            <h2 id="view-plan-title" class="text-2xl font-bold mb-6">Plano de Ação</h2>
+            <div id="view-plan-list" class="space-y-2"></div>
+            <div class="flex justify-end mt-6"><button type="button" id="close-view-plan-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Fechar</button></div>
+        </div>
+    </div>
+    <div id="settings-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 opacity-0">
+        <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6">Configurações</h2>
+            <form id="settings-form">
+                <div class="mb-4">
+                    <label for="api-key-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Chave da API do Gemini</label>
+                    <input type="password" id="api-key-input" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm" placeholder="Cole sua chave aqui">
+                    <p class="text-xs text-gray-500 mt-1">Sua chave é salva apenas no seu navegador.</p>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancel-settings-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 btn-primary rounded-md">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- THEME LOGIC ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+            updateCharts();
+        });
+
+        // --- GLOBAL STATE ---
+        let transactions = [];
+        let recurringTemplates = [];
+        let goals = [];
+        let expenseChart = null;
+        let balanceHistoryChart = null;
+        let temporaryActionPlan = null;
+        
+        // --- STORAGE KEYS ---
+        const TRANSACTIONS_KEY = 'finance_transactions_local';
+        const RECURRING_KEY = 'finance_recurring_templates_local';
+        const GOALS_KEY = 'finance_goals_local';
+        const API_KEY = 'gemini_api_key'; // NOVO
+
+        // --- DATA LOGIC (sem alterações) ---
+        function loadData() {
+            transactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY)) || [];
+            recurringTemplates = JSON.parse(localStorage.getItem(RECURRING_KEY)) || [];
+            goals = JSON.parse(localStorage.getItem(GOALS_KEY)) || [];
+        }
+        function saveData() {
+            localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
+            localStorage.setItem(RECURRING_KEY, JSON.stringify(recurringTemplates));
+            localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+        }
+        function addTransaction(transactionData, skipSave = false) { transactions.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 9), ...transactionData }); if (!skipSave) saveAndRefresh(); }
+        function updateTransaction(id, transactionData) { const index = transactions.findIndex(t => t.id === id); if (index !== -1) { transactions[index] = { ...transactions[index], ...transactionData }; saveAndRefresh(); } }
+        function deleteTransaction(id) { transactions = transactions.filter(t => t.id !== id); saveAndRefresh(); }
+        function addRecurringTemplate(templateData) { recurringTemplates.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 9), ...templateData }); }
+        function deleteRecurringTemplate(id) { recurringTemplates = recurringTemplates.filter(t => t.id !== id); saveAndRefresh(); }
+        function addGoal(goalData) { goals.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 9), savedAmount: 0, ...goalData }); saveAndRefresh(); }
+        function deleteGoal(id) { goals = goals.filter(g => g.id !== id); saveAndRefresh(); }
+        function addFundsToGoal(goalId, amount) { const goal = goals.find(g => g.id === goalId); if (goal) { goal.savedAmount += amount; addTransaction({ type: 'expense', description: `Cofrinho: ${goal.name}`, amount: amount, category: 'Cofrinhos', date: new Date().toISOString().split('T')[0] }, true); saveAndRefresh(); } }
+        function saveAndRefresh() { saveData(); updateUI(); }
+        
+        // --- RECURRING LOGIC (sem alterações) ---
+        function checkAndGenerateRecurringTransactions() {
+            const today = new Date(); const currentMonth = today.getMonth(); const currentYear = today.getFullYear(); let newTransactionsGenerated = false;
+            recurringTemplates.forEach(template => {
+                const startDate = new Date(template.startDate + 'T00:00:00'); if (startDate > today) return;
+                const transactionExists = transactions.some(t => t.recurringTemplateId === template.id && new Date(t.date).getMonth() === currentMonth && new Date(t.date).getFullYear() === currentYear);
+                if (!transactionExists) { const generationDate = new Date(currentYear, currentMonth, startDate.getDate()); addTransaction({ type: 'expense', description: template.description, amount: template.amount, category: template.category, date: generationDate.toISOString().split('T')[0], recurringTemplateId: template.id }, true); newTransactionsGenerated = true; }
+            });
+            if (newTransactionsGenerated) saveAndRefresh();
+        }
+
+        // --- UI LOGIC (sem alterações, exceto formatação) ---
+        function formatCurrency(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+        function updateUI() { transactions.sort((a, b) => new Date(b.date) - new Date(a.date)); updateSummary(); renderTransactionsList(); updateCharts(); updateCategorySuggestions(); renderGoals(); }
+        function updateSummary() { const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0); const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0); const balance = totalIncome - totalExpense; document.getElementById('balance').textContent = formatCurrency(balance); document.getElementById('total-income').textContent = formatCurrency(totalIncome); document.getElementById('total-expense').textContent = formatCurrency(totalExpense); }
+        function renderTransactionsList() { const listElement = document.getElementById('transactions-list'); listElement.innerHTML = ''; if (transactions.length === 0) { listElement.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma transação encontrada.</p>'; return; } transactions.forEach(t => { const item = document.createElement('div'); item.className = `flex items-center justify-between p-3 rounded-lg ${t.type === 'income' ? 'bg-green-50 dark:bg-green-900/50' : 'bg-red-50 dark:bg-red-900/50'}`; const sign = t.type === 'income' ? '+' : '-'; const amountColor = t.type === 'income' ? 'text-green-600' : 'text-red-600'; const date = new Date(t.date + 'T00:00:00-03:00'); const formattedDate = date.toLocaleDateString('pt-BR'); const recurringIcon = t.recurringTemplateId ? '<span class="text-blue-500" title="Despesa Recorrente"> 🔄</span>' : ''; item.innerHTML = `<div class="flex items-center gap-4"><div class="p-2 rounded-full ${t.type === 'income' ? 'bg-green-200 dark:bg-green-800/50' : 'bg-red-200 dark:bg-red-800/50'}"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${amountColor}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${t.type === 'income' ? 'M12 6v12m6-6H6' : 'M18 12H6'}" /></svg></div><div><p class="font-semibold text-gray-800 dark:text-gray-100">${t.description}${recurringIcon}</p><p class="text-sm text-gray-500 dark:text-gray-400">${t.category} • ${formattedDate}</p></div></div><div class="text-right"><p class="font-bold ${amountColor}">${sign} ${formatCurrency(t.amount)}</p><div class="flex gap-2 mt-1"><button data-id="${t.id}" class="edit-btn text-xs text-blue-500 hover:underline">Editar</button><button data-id="${t.id}" class="delete-btn text-xs text-red-500 hover:underline">Excluir</button></div></div>`; listElement.appendChild(item); }); }
+        function renderGoals() { const listEl = document.getElementById('goals-list'); listEl.innerHTML = ''; if (goals.length === 0) { listEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center col-span-full">Crie seu primeiro cofrinho para começar a poupar!</p>'; return; } goals.forEach(goal => { const progress = goal.targetAmount > 0 ? (goal.savedAmount / goal.targetAmount) * 100 : 0; const card = document.createElement('div'); card.className = 'card bg-white dark:bg-gray-800 p-6 flex flex-col justify-between shadow-sm hover:shadow-lg'; const planButton = goal.actionPlan ? `<button data-id="${goal.id}" class="view-plan-btn text-sm text-indigo-500 hover:underline">Ver Plano</button>` : ''; card.innerHTML = `<div><div class="flex justify-between items-start mb-2"><h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">${goal.name}</h3><div class="flex items-center space-x-2">${planButton}<button data-id="${goal.id}" class="delete-goal-btn text-red-400 hover:text-red-600">&times;</button></div></div><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Guardado: <span class="font-semibold text-green-600">${formatCurrency(goal.savedAmount)}</span> de ${formatCurrency(goal.targetAmount)}</p><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2"><div class="progress-bar-fill bg-green-500 h-4 rounded-full" style="width: ${Math.min(progress, 100)}%;"></div></div><p class="text-right text-sm font-semibold">${progress.toFixed(1)}%</p></div><div class="mt-6"><button data-id="${goal.id}" class="add-funds-btn w-full py-2 px-4 rounded-lg font-semibold btn-primary">Adicionar Dinheiro</button></div>`; listEl.appendChild(card); }); }
+        function updateCharts() { updateExpenseChart(); updateBalanceHistoryChart(); }
+        function updateCategorySuggestions() { const datalist = document.getElementById('category-suggestions'); datalist.innerHTML = ''; const uniqueCategories = [...new Set(transactions.map(t => t.category))]; uniqueCategories.forEach(cat => { const option = document.createElement('option'); option.value = cat; datalist.appendChild(option); }); }
+        function updateExpenseChart() { const isDarkMode = document.documentElement.classList.contains('dark'); const legendColor = isDarkMode ? '#d1d5db' : '#4b5563'; const ctx = document.getElementById('expenseChart').getContext('2d'); const expenseData = transactions.filter(t => t.type === 'expense').reduce((acc, t) => { acc[t.category] = (acc[t.category] || 0) + t.amount; return acc; }, {}); const labels = Object.keys(expenseData); const data = Object.values(expenseData); if (expenseChart) expenseChart.destroy(); expenseChart = new Chart(ctx, { type: 'doughnut', data: { labels: labels.length > 0 ? labels : ['Sem despesas'], datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: labels.length > 0 ? ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#a855f7'] : ['#e5e7eb'], borderColor: isDarkMode ? '#1f2937' : '#ffffff', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 20, color: legendColor, font: { family: "'Inter', sans-serif" } } }, tooltip: { callbacks: { label: context => (context.label || '') + ': ' + formatCurrency(context.parsed) } } }, cutout: '60%' } }); }
+        function updateBalanceHistoryChart() { const isDarkMode = document.documentElement.classList.contains('dark'); const ticksColor = isDarkMode ? '#9ca3af' : '#6b7280'; const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'; const ctx = document.getElementById('balanceHistoryChart').getContext('2d'); if (balanceHistoryChart) balanceHistoryChart.destroy(); const allTransactionsSorted = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date)); const balanceHistory = []; let cumulativeBalance = 0; const dailyNet = {}; for (const t of allTransactionsSorted) { if (!dailyNet[t.date]) dailyNet[t.date] = 0; dailyNet[t.date] += t.type === 'income' ? t.amount : -t.amount; } const sortedUniqueDates = Object.keys(dailyNet).sort((a, b) => new Date(a) - new Date(b)); for (const date of sortedUniqueDates) { cumulativeBalance += dailyNet[date]; balanceHistory.push({ date, balance: cumulativeBalance }); } const labels = balanceHistory.map(item => new Date(item.date + 'T00:00:00-03:00').toLocaleDateString('pt-BR')); const data = balanceHistory.map(item => item.balance); balanceHistoryChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Saldo', data: data, borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: '#4f46e5', pointRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: ticksColor, callback: value => formatCurrency(value) }, grid: { color: gridColor } }, x: { ticks: { color: ticksColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => 'Saldo: ' + formatCurrency(context.parsed.y) } } } } }); }
+        
+        // --- MODALS AND EVENT LISTENERS ---
+        const modals = { 
+            transaction: document.getElementById('transaction-modal'),
+            delete: document.getElementById('delete-confirm-modal'),
+            recurring: document.getElementById('recurring-modal'),
+            goal: document.getElementById('goal-modal'),
+            addFunds: document.getElementById('add-funds-modal'),
+            report: document.getElementById('report-modal'),
+            viewPlan: document.getElementById('view-plan-modal'),
+            settings: document.getElementById('settings-modal') // NOVO
+        };
+
+        // NOVO: Função para fechar todos os modais
+        function closeAllModals() {
+            Object.values(modals).forEach(modal => modal.classList.add('hidden'));
+        }
+
+        function setupEventListeners() {
+            document.getElementById('nav-dashboard').addEventListener('click', () => switchPage('dashboard'));
+            document.getElementById('nav-goals').addEventListener('click', () => switchPage('goals'));
+            document.getElementById('add-income-btn').addEventListener('click', () => openTransactionModal('income'));
+            document.getElementById('add-expense-btn').addEventListener('click', () => openTransactionModal('expense'));
+            document.getElementById('transaction-form').addEventListener('submit', handleFormSubmit);
+            document.getElementById('cancel-btn').addEventListener('click', closeAllModals);
+            document.getElementById('cancel-delete-btn').addEventListener('click', closeAllModals);
+            document.getElementById('confirm-delete-btn').addEventListener('click', handleDeleteConfirm);
+            document.getElementById('manage-recurring-btn').addEventListener('click', openRecurringModal);
+            document.getElementById('close-recurring-modal-btn').addEventListener('click', closeAllModals);
+            document.getElementById('add-goal-btn').addEventListener('click', openGoalModal);
+            document.getElementById('goal-form').addEventListener('submit', handleGoalFormSubmit);
+            document.getElementById('cancel-goal-btn').addEventListener('click', closeAllModals);
+            document.getElementById('add-funds-form').addEventListener('submit', handleAddFundsFormSubmit);
+            document.getElementById('cancel-add-funds-btn').addEventListener('click', closeAllModals);
+            document.getElementById('transactions-list').addEventListener('click', handleListClick);
+            document.getElementById('goals-list').addEventListener('click', handleGoalsListClick);
+            document.getElementById('is-installment').addEventListener('change', handleCheckboxChange);
+            document.getElementById('is-recurring').addEventListener('change', handleCheckboxChange);
+            document.getElementById('generate-report-btn').addEventListener('click', openReportModal);
+            document.getElementById('cancel-report-btn').addEventListener('click', closeAllModals);
+            document.getElementById('report-type').addEventListener('change', handleReportTypeChange);
+            document.getElementById('report-form').addEventListener('submit', handleReportFormSubmit);
+            document.getElementById('suggest-category-btn').addEventListener('click', handleSuggestCategoryClick);
+            document.getElementById('create-plan-btn').addEventListener('click', handleCreatePlanClick);
+            document.getElementById('close-view-plan-btn').addEventListener('click', closeAllModals);
+            
+            // NOVO: Listeners para o Modal de Configurações
+            document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
+            document.getElementById('settings-form').addEventListener('submit', handleSettingsFormSubmit);
+            document.getElementById('cancel-settings-btn').addEventListener('click', closeAllModals);
+
+            // NOVO: Listeners para fechar modais com Escape e clique fora
+            window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
+            Object.values(modals).forEach(modal => {
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeAllModals(); });
+            });
+        }
+        function switchPage(page) { document.getElementById('dashboard-page').classList.toggle('hidden', page !== 'dashboard'); document.getElementById('goals-page').classList.toggle('hidden', page !== 'goals'); document.getElementById('nav-dashboard').classList.toggle('active', page === 'dashboard'); document.getElementById('nav-goals').classList.toggle('active', page === 'goals'); }
+        function openTransactionModal(type, transaction = null) { const form = document.getElementById('transaction-form'); form.reset(); document.getElementById('date').valueAsDate = new Date(); document.getElementById('options-section').classList.toggle('hidden', type === 'income' || !!transaction); document.getElementById('installments-count-container').classList.add('hidden'); document.getElementById('modal-title').textContent = transaction ? 'Editar Transação' : (type === 'income' ? 'Adicionar Receita' : 'Adicionar Despesa'); document.getElementById('transaction-type').value = type; if (transaction) { document.getElementById('transaction-id').value = transaction.id; document.getElementById('description').value = transaction.description; document.getElementById('amount').value = transaction.amount; document.getElementById('category').value = transaction.category; document.getElementById('date').value = transaction.date; } else { document.getElementById('transaction-id').value = ''; } updateDateLabel(); modals.transaction.classList.remove('hidden'); }
+        function openDeleteModal(id, type = 'transaction') { const confirmBtn = document.getElementById('confirm-delete-btn'); confirmBtn.dataset.id = id; confirmBtn.dataset.type = type; document.getElementById('delete-modal-text').textContent = `Tem certeza que deseja excluir est${type === 'goal' ? 'e cofrinho' : 'a transação'}?`; modals.delete.classList.remove('hidden'); }
+        function handleDeleteConfirm(e) { const { id, type } = e.target.dataset; if (type === 'goal') deleteGoal(id); else deleteTransaction(id); closeAllModals(); }
+        function openRecurringModal() { const listEl = document.getElementById('recurring-list'); listEl.innerHTML = ''; if (recurringTemplates.length === 0) { listEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma despesa recorrente encontrada.</p>'; } else { recurringTemplates.forEach(template => { const item = document.createElement('div'); item.className = 'flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded'; item.innerHTML = `<div><p class="font-semibold">${template.description}</p><p class="text-sm text-gray-600 dark:text-gray-400">${formatCurrency(template.amount)} / mês - Cat: ${template.category}</p></div><button data-id="${template.id}" class="delete-recurring-btn p-2 text-red-500 hover:text-red-700">&times;</button>`; item.querySelector('.delete-recurring-btn').addEventListener('click', () => { deleteRecurringTemplate(template.id); openRecurringModal(); }); listEl.appendChild(item); }); } modals.recurring.classList.remove('hidden'); }
+        function openGoalModal() { document.getElementById('goal-form').reset(); document.getElementById('action-plan-display').classList.add('hidden'); temporaryActionPlan = null; modals.goal.classList.remove('hidden'); }
+        function openAddFundsModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal) { document.getElementById('add-funds-form').reset(); document.getElementById('add-funds-goal-id').value = goalId; document.getElementById('add-funds-modal-title').textContent = `Adicionar a: ${goal.name}`; modals.addFunds.classList.remove('hidden'); } }
+        function openViewPlanModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal && goal.actionPlan) { document.getElementById('view-plan-title').textContent = `Plano para: ${goal.name}`; const listEl = document.getElementById('view-plan-list'); listEl.innerHTML = goal.actionPlan.map(step => `<li class="p-2 bg-gray-100 dark:bg-gray-700 rounded">${step}</li>`).join(''); modals.viewPlan.classList.remove('hidden'); } }
+        function openReportModal() { const reportForm = document.getElementById('report-form'); reportForm.reset(); handleReportTypeChange(); const now = new Date(); const year = now.getFullYear(); const month = (now.getMonth() + 1).toString().padStart(2, '0'); document.getElementById('report-month').value = `${year}-${month}`; document.getElementById('report-year').value = year; modals.report.classList.remove('hidden'); }
+        function updateDateLabel() { const dateLabel = document.getElementById('date-label'); if (document.getElementById('is-installment').checked) dateLabel.textContent = 'Data da 1ª Parcela'; else if (document.getElementById('is-recurring').checked) dateLabel.textContent = 'Data de Início da Recorrência'; else dateLabel.textContent = 'Data'; }
+        function handleCheckboxChange(e) { const isInstallment = document.getElementById('is-installment'); const isRecurring = document.getElementById('is-recurring'); if (e.target === isInstallment && isInstallment.checked) isRecurring.checked = false; if (e.target === isRecurring && isRecurring.checked) isInstallment.checked = false; document.getElementById('installments-count-container').classList.toggle('hidden', !isInstallment.checked); updateDateLabel(); }
+        function handleFormSubmit(e) { e.preventDefault(); const id = document.getElementById('transaction-id').value; const description = document.getElementById('description').value; const totalAmount = parseFloat(document.getElementById('amount').value); const category = document.getElementById('category').value.trim(); const type = document.getElementById('transaction-type').value; const startDateValue = document.getElementById('date').value; if (id) { updateTransaction(id, { description, amount: totalAmount, category, date: startDateValue, type }); } else if (document.getElementById('is-recurring').checked) { addRecurringTemplate({ description, amount: totalAmount, category, startDate: startDateValue }); checkAndGenerateRecurringTransactions(); } else if (document.getElementById('is-installment').checked) { const installmentsCount = parseInt(document.getElementById('installments-count').value, 10); if (installmentsCount >= 2) { const installmentAmount = totalAmount / installmentsCount; const startDate = new Date(startDateValue + 'T00:00:00'); for (let i = 1; i <= installmentsCount; i++) { const installmentDate = new Date(startDate); installmentDate.setMonth(startDate.getMonth() + i - 1); addTransaction({ type: 'expense', description: `${description} (${i}/${installmentsCount})`, amount: installmentAmount, category, date: installmentDate.toISOString().split('T')[0] }, true); } saveAndRefresh(); } } else { addTransaction({ type, description, amount: totalAmount, category, date: startDateValue }); } closeAllModals(); }
+        function handleGoalFormSubmit(e) { e.preventDefault(); const name = document.getElementById('goal-name').value; const target = parseFloat(document.getElementById('goal-target').value); addGoal({ name, targetAmount: target, actionPlan: temporaryActionPlan }); closeAllModals(); }
+        function handleAddFundsFormSubmit(e) { e.preventDefault(); const goalId = document.getElementById('add-funds-goal-id').value; const amount = parseFloat(document.getElementById('add-funds-amount').value); if (goalId && amount > 0) addFundsToGoal(goalId, amount); closeAllModals(); }
+        function handleReportTypeChange() { const type = document.getElementById('report-type').value; document.getElementById('report-month-container').classList.toggle('hidden', type !== 'monthly'); document.getElementById('report-year-container').classList.toggle('hidden', type !== 'annual'); }
+        async function handleReportFormSubmit(e) { e.preventDefault(); const generateBtn = document.getElementById('generate-pdf-btn'); const originalBtnText = generateBtn.textContent; generateBtn.disabled = true; generateBtn.textContent = 'Gerando...'; const type = document.getElementById('report-type').value; const includeAI = document.getElementById('include-ai-analysis').checked; const value = type === 'monthly' ? document.getElementById('report-month').value : document.getElementById('report-year').value; if (value) { await generatePDF(type, value, includeAI); closeAllModals(); } else { alert('Por favor, preencha o período do relatório.'); } generateBtn.disabled = false; generateBtn.textContent = originalBtnText; }
+        function handleListClick(e) { const targetButton = e.target.closest('button'); if (!targetButton) return; const id = targetButton.dataset.id; if (targetButton.classList.contains('delete-btn')) openDeleteModal(id, 'transaction'); if (targetButton.classList.contains('edit-btn')) { const transactionToEdit = transactions.find(t => t.id === id); if (transactionToEdit) openTransactionModal(transactionToEdit.type, transactionToEdit); } }
+        function handleGoalsListClick(e) { const targetButton = e.target.closest('button'); if (!targetButton) return; const id = targetButton.dataset.id; if (targetButton.classList.contains('delete-goal-btn')) openDeleteModal(id, 'goal'); if (targetButton.classList.contains('add-funds-btn')) openAddFundsModal(id); if (targetButton.classList.contains('view-plan-btn')) openViewPlanModal(id); }
+        
+        // NOVO: Funções para o modal de Configurações
+        function openSettingsModal() {
+            document.getElementById('api-key-input').value = localStorage.getItem(API_KEY) || '';
+            modals.settings.classList.remove('hidden');
+        }
+        function handleSettingsFormSubmit(e) {
+            e.preventDefault();
+            const newKey = document.getElementById('api-key-input').value;
+            localStorage.setItem(API_KEY, newKey);
+            closeAllModals();
+            alert('Chave de API salva com sucesso!');
+        }
+
+        // --- PDF & AI GENERATION (REATORADO) ---
+        async function callGeminiAPI(payload) {
+            const apiKey = localStorage.getItem(API_KEY);
+            if (!apiKey) {
+                throw new Error('API Key not configured.');
+            }
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+            const result = await response.json();
+             if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                 throw new Error("Invalid response structure from API.");
+            }
+        }
+
+        async function getAIAnalysis(expenses, periodText) {
+            const simplifiedExpenses = expenses.map(({ category, amount }) => ({ category, amount }));
+            const prompt = `Analise os seguintes dados de despesas para o período de ${periodText} e forneça um resumo conciso em português. Aponte as 3 principais categorias de gastos e ofereça uma dica de economia baseada nos dados. Seja breve e direto. Dados: ${JSON.stringify(simplifiedExpenses)}`;
+            try {
+                const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                return await callGeminiAPI(payload);
+            } catch (error) {
+                console.error("AI Analysis Error:", error);
+                alert(`Erro ao gerar análise de IA: ${error.message}`);
+                return "Erro ao contatar o serviço de IA. Verifique sua chave de API nas configurações e sua conexão com a internet.";
+            }
+        }
+        async function generatePDF(periodType, periodValue, includeAI) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let reportTitle = "Relatório de Despesas", fileName = "relatorio-despesas.pdf", filteredExpenses = [], periodText = "";
+            if (periodType === 'monthly') { const [year, month] = periodValue.split('-'); const monthName = new Date(periodValue + '-02').toLocaleString('pt-BR', { month: 'long' }); periodText = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${year}`; reportTitle = `Relatório de Despesas - ${periodText}`; fileName = `relatorio-despesas-${year}-${month}.pdf`; filteredExpenses = transactions.filter(t => { const tDate = new Date(t.date); return t.type === 'expense' && tDate.getFullYear() == year && tDate.getMonth() == (month - 1); });
+            } else { periodText = `o ano de ${periodValue}`; reportTitle = `Relatório de Despesas - Ano ${periodValue}`; fileName = `relatorio-despesas-${periodValue}.pdf`; filteredExpenses = transactions.filter(t => t.type === 'expense' && new Date(t.date).getFullYear() == periodValue); }
+            doc.setFontSize(18); doc.text(reportTitle, 14, 22); let startY = 32;
+            if (includeAI) { const aiAnalysisText = await getAIAnalysis(filteredExpenses, periodText); doc.setFontSize(12); doc.setFont(undefined, 'bold'); doc.text("Análise Inteligente", 14, startY); startY += 7; doc.setFontSize(10); doc.setFont(undefined, 'normal'); const splitText = doc.splitTextToSize(aiAnalysisText, 180); doc.text(splitText, 14, startY); startY += (splitText.length * 5) + 10; }
+            const totalExpenses = filteredExpenses.reduce((sum, t) => sum + t.amount, 0); doc.setFontSize(11); doc.setTextColor(100); doc.text(`Total de Despesas no Período: ${formatCurrency(totalExpenses)}`, 14, startY); startY += 10;
+            const tableColumn = ["Data", "Descrição", "Categoria", "Valor"]; const tableRows = []; filteredExpenses.forEach(t => { tableRows.push([ new Date(t.date + 'T00:00:00').toLocaleDateString('pt-BR'), t.description, t.category, formatCurrency(t.amount) ]); });
+            doc.autoTable({ head: [tableColumn], body: tableRows, startY: startY, headStyles: { fillColor: [79, 70, 229] }, styles: { font: 'helvetica', halign: 'left' }, columnStyles: { 3: { halign: 'right' } } });
+            doc.save(fileName);
+        }
+        
+        async function handleSuggestCategoryClick(e) {
+            const btn = e.currentTarget; const originalContent = btn.innerHTML; btn.innerHTML = '...'; btn.disabled = true;
+            const description = document.getElementById('description').value;
+            if (!description) { alert('Por favor, insira uma descrição primeiro.'); btn.innerHTML = originalContent; btn.disabled = false; return; }
+            const commonCategories = "Alimentação, Transporte, Moradia, Lazer, Saúde, Salário, Educação, Compras, Serviços, Impostos, Outros";
+            const prompt = `Dada a descrição de transação financeira "${description}", sugira a categoria mais apropriada a partir desta lista: ${commonCategories}. Responda apenas com o nome da categoria.`;
+            try {
+                const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                const category = await callGeminiAPI(payload);
+                document.getElementById('category').value = category.trim();
+            } catch (error) {
+                console.error("Category Suggestion Error:", error);
+                alert(`Erro ao sugerir categoria: ${error.message}`);
+            } finally {
+                btn.innerHTML = originalContent; btn.disabled = false;
+            }
+        }
+        async function handleCreatePlanClick(e) {
+            const btn = e.currentTarget; const originalContent = btn.innerHTML; btn.innerHTML = 'Criando...'; btn.disabled = true;
+            const goalName = document.getElementById('goal-name').value;
+            const goalTarget = document.getElementById('goal-target').value;
+            if (!goalName || !goalTarget) { alert('Por favor, preencha o nome e o valor da meta.'); btn.innerHTML = originalContent; btn.disabled = false; return; }
+            const prompt = `Crie um plano de ação simples e prático em português para a meta financeira "${goalName}" com um objetivo de ${formatCurrency(parseFloat(goalTarget))}. Forneça uma lista de 3 a 5 passos. Responda com um JSON contendo uma chave "plan" que é um array de strings.`;
+            try {
+                const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                const resultText = await callGeminiAPI(payload);
+                const planJson = JSON.parse(resultText.replace(/```json/g, '').replace(/```/g, ''));
+                temporaryActionPlan = planJson.plan;
+                const displayEl = document.getElementById('action-plan-display');
+                displayEl.innerHTML = `<p class="font-semibold text-sm mb-2">Plano Sugerido:</p><ul class="list-disc list-inside space-y-1 text-sm">${temporaryActionPlan.map(step => `<li>${step}</li>`).join('')}</ul>`;
+                displayEl.classList.remove('hidden');
+            } catch (error) {
+                console.error("Action Plan Error:", error);
+                alert(`Erro ao criar plano de ação: ${error.message}`);
+            } finally {
+                btn.innerHTML = originalContent; btn.disabled = false;
+            }
+        }
+
+        // --- INITIALIZATION ---
+        loadData();
+        checkAndGenerateRecurringTransactions();
+        setupEventListeners();
+        switchPage('dashboard');
+        updateUI();
+    });
+    </script>
+</body>
+</html>
