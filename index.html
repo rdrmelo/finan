@@ -690,10 +690,6 @@
                     <h1 class="text-2xl neon-text">FinanceX</h1>
                     <span id="welcome-message" class="text-secondary"></span>
                 </div>
-                <div class="flex gap-4">
-                    <button id="settings-btn" class="btn btn-ghost">⚙️</button>
-                    <button id="logout-btn" class="btn btn-danger">Sair</button>
-                </div>
             </div>
         </header>
         
@@ -1022,6 +1018,28 @@
     
     <!-- Notification -->
     <div id="notification" class="hidden" style="position: fixed; top: 20px; right: 20px; z-index: 10000; padding: 16px 24px; border-radius: 12px; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);"></div>
+
+    <!-- Bottom Navigation para Mobile -->
+    <div class="mobile-bottom-nav">
+        <div class="nav-items">
+            <button class="nav-item" data-page="dashboard">
+                <div class="icon">📊</div>
+                <div class="label">Dashboard</div>
+            </button>
+            <button class="nav-item" data-page="transactions">
+                <div class="icon">💳</div>
+                <div class="label">Transações</div>
+            </button>
+            <button class="nav-item" data-page="reports">
+                <div class="icon">📈</div>
+                <div class="label">Relatórios</div>
+            </button>
+            <button class="nav-item" data-page="settings">
+                <div class="icon">⚙️</div>
+                <div class="label">Config</div>
+            </button>
+        </div>
+    </div>
     
     <script type="module">
         // Firebase imports
@@ -1175,49 +1193,45 @@
         }
 
         // Navigation
-        function switchPage(page) {
-            const pages = ['dashboard', 'transactions', 'reports', 'settings'];
-            
-            pages.forEach(p => {
-                const pageElement = document.getElementById(`${p}-page`);
-                const navBtn = document.querySelector(`[data-page="${p}"]`);
-                
-                if (p === page) {
-    pageElement.classList.remove('hidden');
-    navBtn.classList.add('btn-primary');
-    navBtn.classList.remove('btn-ghost');
-
-    if (p !== 'dashboard') { // evita animação no dashboard
-        anime({
-            targets: pageElement,
-            opacity: [0, 1],
-            translateY: [20, 0],
-            duration: 500,
-            easing: 'easeOutQuad'
-        });
-    } else {
-        pageElement.style.opacity = 1;
-        pageElement.style.transform = "none";
-    }
-} else {
-    pageElement.classList.add('hidden');
-    navBtn.classList.remove('btn-primary');
-    navBtn.classList.add('btn-ghost');
-}
-            });
-            
-            currentPage = page;
-            
-            // Update charts only when switching to dashboard
-            if (page === 'dashboard') {
-                updateCharts();
-            }
-            
-            // Update transactions list when switching to transactions page
-            if (page === 'transactions') {
-                renderTransactionsList();
-            }
+        function updateBottomNavigation(currentPage) {
+    document.querySelectorAll('.mobile-bottom-nav .nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.page === currentPage) {
+            item.classList.add('active');
         }
+    });
+}
+
+function switchPage(page) {
+    currentPage = page;
+    
+    // Esconder todas as páginas
+    document.querySelectorAll('[id$="-page"]').forEach(p => p.classList.add('hidden'));
+    
+    // Mostrar página atual
+    const targetPage = document.getElementById(page + '-page');
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+    }
+    
+    // Atualizar navegação
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.page === page) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Atualizar bottom navigation
+    updateBottomNavigation(page);
+    
+    // Atualizar charts se for dashboard
+    if (page === 'dashboard') {
+        setTimeout(() => {
+            updateUIWithCharts();
+        }, 100);
+    }
+}
 
         // Firebase Data Functions
         async function addTransaction(transactionData) {
@@ -1998,43 +2012,51 @@
         // Event Listeners Setup
         function setupEventListeners() {
             // Mobile menu toggle
-            safeAddEventListener('mobile-menu-toggle', 'click', () => {
+            safeAddEventListener('mobile-nav-toggle', 'click', () => {
                 const mobileMenu = document.getElementById('mobile-nav-menu');
                 const isOpen = mobileMenu.classList.contains('active');
                 
                 if (isOpen) {
                     mobileMenu.classList.remove('active');
-                    anime({
-                        targets: '#mobile-nav-menu',
-                        translateX: [0, '-100%'],
-                        duration: 300,
-                        easing: 'easeInQuad'
-                    });
+                    mobileMenu.style.display = 'none';
                 } else {
                     mobileMenu.classList.add('active');
-                    anime({
-                        targets: '#mobile-nav-menu',
-                        translateX: ['-100%', 0],
-                        duration: 300,
-                        easing: 'easeOutQuad'
-                    });
+                    mobileMenu.style.display = 'flex';
                 }
+            });
+
+            // Bottom navigation
+            document.querySelectorAll('.mobile-bottom-nav .nav-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active de todos
+                    document.querySelectorAll('.mobile-bottom-nav .nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Adiciona active no clicado
+                    btn.classList.add('active');
+                    
+                    // Navega para a página
+                    switchPage(btn.dataset.page);
+                });
+            });
+            
+            // Mobile menu close button
+            safeAddEventListener('mobile-nav-close', 'click', () => {
+                const mobileMenu = document.getElementById('mobile-nav-menu');
+                mobileMenu.classList.remove('active');
+                mobileMenu.style.display = 'none';
             });
             
             // Mobile menu navigation
-            document.querySelectorAll('.nav-btn').forEach(btn => {
+            document.querySelectorAll('.mobile-nav-item').forEach(btn => {
                 btn.addEventListener('click', () => {
                     switchPage(btn.dataset.page);
                     // Close mobile menu after navigation
                     const mobileMenu = document.getElementById('mobile-nav-menu');
                     if (mobileMenu && mobileMenu.classList.contains('active')) {
                         mobileMenu.classList.remove('active');
-                        anime({
-                            targets: '#mobile-nav-menu',
-                            translateX: [0, '-100%'],
-                            duration: 300,
-                            easing: 'easeInQuad'
-                        });
+                        mobileMenu.style.display = 'none';
                     }
                 });
             });
