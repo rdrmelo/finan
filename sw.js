@@ -23,6 +23,41 @@ self.addEventListener('install', (event) => {
 });
 
 // Interceptar requisições
+// Service Worker aprimorado
+const CACHE_NAME = 'financex-v2';
+const DYNAMIC_CACHE = 'financex-dynamic-v1';
+
+// Cache com estratégias diferentes
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+    const url = new URL(request.url);
+    
+    // API calls - Network First
+    if (url.pathname.includes('/api/')) {
+        event.respondWith(networkFirst(request));
+    }
+    // Static assets - Cache First
+    else if (request.destination === 'script' || request.destination === 'style') {
+        event.respondWith(cacheFirst(request));
+    }
+    // HTML - Stale While Revalidate
+    else {
+        event.respondWith(staleWhileRevalidate(request));
+    }
+});
+
+async function networkFirst(request) {
+    try {
+        const response = await fetch(request);
+        const cache = await caches.open(DYNAMIC_CACHE);
+        cache.put(request, response.clone());
+        return response;
+    } catch (error) {
+        const cache = await caches.open(DYNAMIC_CACHE);
+        return await cache.match(request);
+    }
+}
+
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)

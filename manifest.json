@@ -1,75 +1,37 @@
 {
-  "name": "Controle Financeiro",
-  "short_name": "FinanceApp",
-  "description": "Aplicativo de controle financeiro pessoal com recursos avançados",
-  "start_url": "/Controle Financeiro.html",
+  "name": "FinanceX - Controle Financeiro",
+  "short_name": "FinanceX",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4f46e5",
-  "orientation": "portrait",
-  "scope": "/",
-  "lang": "pt-BR",
-  "categories": ["finance", "productivity", "business"],
-  "icons": [
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iOCIgZmlsbD0iIzRmNDZlNSIvPgo8cGF0aCBkPSJNMTIgMTZoMjR2MTZIMTJWMTZ6IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTE2IDIwaDh2OGgtOFYyMHoiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMjQiIHI9IjQiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
-      "sizes": "48x48",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHBhdGggZD0iTTE4IDI0aDM2djI0SDE4VjI0eiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik0yNCAzMGgxMnYxMkgyNFYzMHoiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjQ4IiBjeT0iMzYiIHI9IjYiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
-      "sizes": "72x72",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHBhdGggZD0iTTI0IDMyaDQ4djMySDI0VjMyeiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik0zMiA0MGgxNnYxNkgzMlY0MHoiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjgiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
-      "sizes": "96x96",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNDQiIGhlaWdodD0iMTQ0IiByeD0iMjQiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHBhdGggZD0iTTM2IDQ4aDcydjQ4SDM2VjQ4eiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI2IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik00OCA2MGgyNHYyNEg0OFY2MHoiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iNzIiIHI9IjEyIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K",
-      "sizes": "144x144",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzIiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHBhdGggZD0iTTQ4IDY0aDk2djY0SDQ4VjY0eiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI4IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik02NCA4MGgzMnYzMkg2NFY4MHoiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjEyOCIgY3k9Ijk2IiByPSIxNiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iODQiIGZpbGw9IiM0ZjQ2ZTUiLz4KPHBhdGggZD0iTTEyOCAxNzBoMjU2djE3MkgxMjhWMTcweiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyMCIgZmlsbD0ibm9uZSIvPgo8cGF0aCBkPSJNMTcwIDIxM2g4NXY4NmgtODVWMjEzeiIgZmlsbD0id2hpdGUiLz4KPGNpcmNsZSBjeD0iMzQxIiBjeT0iMjU2IiByPSI0MyIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ],
+  "orientation": "portrait-primary",
+  "theme_color": "#0f0f23",
+  "background_color": "#0f0f23",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
   "shortcuts": [
     {
-      "name": "Nova Transação",
-      "short_name": "Transação",
-      "description": "Adicionar nova transação",
-      "url": "/Controle Financeiro.html?action=new-transaction",
-      "icons": [
-        {
-          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiMyMmM1NWUiLz4KPHBhdGggZD0iTTQ4IDI0djQ4IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQiLz4KPHBhdGggZD0iTTI0IDQ4aDQ4IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQiLz4KPC9zdmc+Cg==",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
-        }
-      ]
+      "name": "Nova Receita",
+      "url": "/?action=income",
+      "icons": [{
+        "src": "/icons/income-96.png",
+        "sizes": "96x96"
+      }]
     },
     {
-      "name": "Relatórios",
-      "short_name": "Relatórios",
-      "description": "Ver relatórios financeiros",
-      "url": "/Controle Financeiro.html?action=reports",
-      "icons": [
-        {
-          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTYiIGZpbGw9IiNmOTczMTYiLz4KPHBhdGggZD0iTTI0IDcyaDQ4VjI0SDI0djQ4eiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik0zMiA2NGgzMlY0MEgzMnYyNHoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
-        }
-      ]
+      "name": "Nova Despesa",
+      "url": "/?action=expense",
+      "icons": [{
+        "src": "/icons/expense-96.png",
+        "sizes": "96x96"
+      }]
     }
   ],
-  "prefer_related_applications": false
+  "categories": ["finance", "productivity"],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
 }
