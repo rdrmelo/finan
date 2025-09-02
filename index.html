@@ -1280,7 +1280,7 @@
                 saveAndRefresh();
             }
             function addFundsToGoal(goalId, amount) { const goal = goals.find(g => g.id === goalId); if (goal) { goal.savedAmount += amount; addTransaction({ type: 'expense', description: `Cofrinho: ${goal.name}`, amount: amount, category: 'Cofrinhos', date: new Date().toISOString().split('T')[0] }, true); saveAndRefresh(); } }
-            function saveAndRefresh() { saveData(); updateUI(); }
+
             
             function checkAndGenerateRecurringTransactions() {
                 const today = new Date(); const currentMonth = today.getMonth(); const currentYear = today.getFullYear(); let newTransactionsGenerated = false;
