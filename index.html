@@ -993,13 +993,14 @@
         }
 
             async function initializeAppLogic(user) {
-            document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${user.email.split('@')[0]}!`;
-            
-            // Inicializar EmailJS
-            initializeEmailJS();
-            
-            // Verificar relatórios mensais automáticos
-            checkMonthlyReport();
+            try {
+                document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${user.email.split('@')[0]}!`;
+                
+                // Inicializar EmailJS
+                initializeEmailJS();
+                
+                // Verificar relatórios mensais automáticos
+                checkMonthlyReport();
             
             // Setup Firestore Listeners
             const collections = ['transactions', 'goals', 'categories', 'budgets', 'recurringTemplates'];
@@ -1023,6 +1024,11 @@
                 unsubscribeListeners.push(unsub);
             });
             switchPage('dashboard');
+            } catch (error) {
+                console.error('Erro na inicialização da aplicação:', error);
+                // Mesmo com erro, tenta continuar com a inicialização básica
+                switchPage('dashboard');
+            }
         }
 
             // --- ESTADO GLOBAL ---
@@ -2448,9 +2454,13 @@
 
     // --- FUNCIONALIDADES DE EMAIL ---
     function initializeEmailJS() {
-        const emailSettings = getEmailSettings();
-        if (emailSettings.publicKey) {
-            emailjs.init(emailSettings.publicKey);
+        try {
+            const emailSettings = getEmailSettings();
+            if (emailSettings.publicKey && typeof emailjs !== 'undefined') {
+                emailjs.init(emailSettings.publicKey);
+            }
+        } catch (error) {
+            console.warn('EmailJS não está disponível:', error);
         }
     }
     
@@ -2606,25 +2616,29 @@
     
     // Verificar se deve enviar relatório mensal automaticamente
     function checkMonthlyReport() {
-        const settings = getEmailSettings();
-        if (!settings.monthlyReportsEnabled) return;
-        
-        const lastReportDate = localStorage.getItem('lastMonthlyReport');
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-        
-        if (lastReportDate) {
-            const lastReport = new Date(lastReportDate);
-            if (lastReport.getMonth() === currentMonth && lastReport.getFullYear() === currentYear) {
-                return; // Já enviou este mês
+        try {
+            const settings = getEmailSettings();
+            if (!settings.monthlyReportsEnabled) return;
+            
+            const lastReportDate = localStorage.getItem('lastMonthlyReport');
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            
+            if (lastReportDate) {
+                const lastReport = new Date(lastReportDate);
+                if (lastReport.getMonth() === currentMonth && lastReport.getFullYear() === currentYear) {
+                    return; // Já enviou este mês
+                }
             }
-        }
-        
-        // Verificar se é o primeiro dia do mês
-        if (currentDate.getDate() === 1) {
-            sendMonthlyReport();
-            localStorage.setItem('lastMonthlyReport', currentDate.toISOString());
+            
+            // Verificar se é o primeiro dia do mês
+            if (currentDate.getDate() === 1) {
+                sendMonthlyReport();
+                localStorage.setItem('lastMonthlyReport', currentDate.toISOString());
+            }
+        } catch (error) {
+            console.warn('Erro ao verificar relatório mensal:', error);
         }
     }
 
