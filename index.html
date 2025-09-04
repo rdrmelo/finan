@@ -486,9 +486,7 @@
                 <button id="logout-btn" title="Sair" class="p-2 rounded-full text-gray-400 hover:bg-white/10 hover:text-cyan-400 focus:outline-none transition-colors">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
                 </button>
-                    <button id="settings-btn" title="Configurações" class="p-2 rounded-full text-gray-400 hover:bg-white/10 hover:text-cyan-400 focus:outline-none transition-colors">
-                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.332.183-.582.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 0 1-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 0 1-.26-1.431l1.296-2.247a1.125 1.125 0 0 1 1.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.213-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-                </button>
+    
             </div>
         </header>
 
@@ -497,6 +495,7 @@
             <button id="nav-budgets" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold">Orçamentos</button>
             <button id="nav-calendar" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold">Calendário</button>
             <button id="nav-goals" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold">Cofrinhos</button>
+            <button id="nav-settings" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold">Configurações</button>
         </nav>
 
         <div id="dashboard-page">
@@ -544,7 +543,30 @@
                     <button id="send-monthly-report-btn" class="btn col-span-2 sm:col-span-1 md:col-span-1" style="background: var(--success-gradient);">📧 Enviar Relatório</button>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Previsões Inteligentes em formato horizontal -->
+                <div class="glass-card mb-6">
+                    <h3 class="font-mono font-semibold mb-4 neon-text">📈 Previsões Inteligentes</h3>
+                    <div id="predictions-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg border border-blue-400/30">
+                            <h4 class="font-semibold text-blue-300 mb-2">Previsão Próximo Mês</h4>
+                            <p id="next-month-prediction" class="text-2xl font-mono text-blue-400">Calculando...</p>
+                            <p class="text-sm text-gray-400 mt-1">Baseado nos últimos 3 meses</p>
+                        </div>
+                        <div class="p-4 bg-gradient-to-r from-green-500/20 to-teal-500/20 rounded-lg border border-green-400/30">
+                            <h4 class="font-semibold text-green-300 mb-2">Economia Sugerida</h4>
+                            <p id="savings-suggestion" class="text-lg font-mono text-green-400">Analisando...</p>
+                            <p class="text-sm text-gray-400 mt-1">Para atingir suas metas</p>
+                        </div>
+                        <div class="p-4 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-400/30">
+                            <h4 class="font-semibold text-yellow-300 mb-2">Categoria em Alta</h4>
+                            <p id="trending-category" class="text-lg font-mono text-yellow-400">Verificando...</p>
+                            <p class="text-sm text-gray-400 mt-1">Maior crescimento recente</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gráficos de Despesas e Cofrinhos -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="glass-card">
                         <h3 class="font-mono font-semibold mb-4 neon-text">Despesas por Categoria</h3>
                         <div class="h-80"><canvas id="expenseChart"></canvas></div>
@@ -552,26 +574,6 @@
                     <div class="glass-card">
                         <h3 class="font-mono font-semibold mb-4 neon-text">Progresso dos Cofrinhos</h3>
                         <div class="h-80"><canvas id="goalsChart"></canvas></div>
-                    </div>
-                    <div class="glass-card">
-                        <h3 class="font-mono font-semibold mb-4 neon-text">📈 Previsões Inteligentes</h3>
-                        <div id="predictions-container" class="space-y-4">
-                            <div class="p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg border border-blue-400/30">
-                                <h4 class="font-semibold text-blue-300 mb-2">Previsão Próximo Mês</h4>
-                                <p id="next-month-prediction" class="text-2xl font-mono text-blue-400">Calculando...</p>
-                                <p class="text-sm text-gray-400 mt-1">Baseado nos últimos 3 meses</p>
-                            </div>
-                            <div class="p-4 bg-gradient-to-r from-green-500/20 to-teal-500/20 rounded-lg border border-green-400/30">
-                                <h4 class="font-semibold text-green-300 mb-2">Economia Sugerida</h4>
-                                <p id="savings-suggestion" class="text-lg font-mono text-green-400">Analisando...</p>
-                                <p class="text-sm text-gray-400 mt-1">Para atingir suas metas</p>
-                            </div>
-                            <div class="p-4 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-400/30">
-                                <h4 class="font-semibold text-yellow-300 mb-2">Categoria em Alta</h4>
-                                <p id="trending-category" class="text-lg font-mono text-yellow-400">Verificando...</p>
-                                <p class="text-sm text-gray-400 mt-1">Maior crescimento recente</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="glass-card">
@@ -639,6 +641,112 @@
                 <button id="add-goal-btn" class="btn btn-primary">Adicionar Novo Cofrinho</button>
             </header>
             <div id="goals-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="settings-page" class="hidden">
+            <header class="mb-8">
+                <h2 class="font-mono text-2xl font-bold neon-text mb-2">Configurações</h2>
+                <p class="text-gray-400">Personalize sua experiência no FinanceX</p>
+            </header>
+
+            <!-- Seção API -->
+            <div class="glass-card mb-6">
+                <h3 class="font-semibold text-cyan-400 mb-4 text-lg">🤖 Integração IA</h3>
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label for="api-key-input" class="form-label">Chave da API do Gemini</label>
+                        <input type="password" id="api-key-input" class="form-input" placeholder="Cole sua chave aqui">
+                        <p class="text-xs text-gray-500 mt-1">Sua chave é salva apenas no seu navegador.</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Chave API</button>
+                </form>
+            </div>
+
+            <!-- Seção Backup -->
+            <div class="glass-card mb-6">
+                <h3 class="font-semibold text-green-400 mb-4 text-lg">💾 Backup de Dados</h3>
+                <div class="space-y-3">
+                    <button type="button" id="export-data-btn" class="btn btn-success w-full flex items-center justify-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Exportar Dados</span>
+                    </button>
+                    <div class="relative">
+                        <input type="file" id="import-file-input" accept=".json" class="hidden">
+                        <button type="button" id="import-data-btn" class="btn btn-ghost w-full flex items-center justify-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                            </svg>
+                            <span>Importar Dados</span>
+                        </button>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <p>• Backup automático a cada alteração</p>
+                        <p>• Dados salvos localmente no navegador</p>
+                        <p>• Exporte regularmente para segurança</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Alertas -->
+            <div class="glass-card mb-6">
+                <h3 class="font-semibold text-yellow-400 mb-4 text-lg">🔔 Alertas</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" id="budget-alerts-enabled" class="form-checkbox">
+                        <span class="text-sm">Alertas de orçamento (80% do limite)</span>
+                    </label>
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" id="backup-reminders-enabled" class="form-checkbox">
+                        <span class="text-sm">Lembrete de backup semanal</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção Email -->
+            <div class="glass-card mb-6">
+                <h3 class="font-semibold text-blue-400 mb-4 text-lg">📧 Relatórios por Email</h3>
+                <div class="space-y-3">
+                    <div class="form-group">
+                        <label for="user-email" class="form-label">Seu Email</label>
+                        <input type="email" id="user-email" class="form-input" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailjs-service-id" class="form-label">Service ID (EmailJS)</label>
+                        <input type="text" id="emailjs-service-id" class="form-input" placeholder="service_xxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailjs-template-id" class="form-label">Template ID (EmailJS)</label>
+                        <input type="text" id="emailjs-template-id" class="form-input" placeholder="template_xxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailjs-public-key" class="form-label">Public Key (EmailJS)</label>
+                        <input type="text" id="emailjs-public-key" class="form-input" placeholder="xxxxxxxxxxxxxxxx">
+                    </div>
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" id="monthly-reports-enabled" class="form-checkbox">
+                        <span class="text-sm">Enviar relatório mensal automaticamente</span>
+                    </label>
+                    <button type="button" id="send-test-email-btn" class="btn btn-primary w-full">Enviar Email de Teste</button>
+                    <div class="text-xs text-gray-500">
+                        <p>• Configure uma conta gratuita no EmailJS</p>
+                        <p>• Crie um template de email personalizado</p>
+                        <p>• Mantenha suas credenciais seguras</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Sobre -->
+            <div class="glass-card">
+                <h3 class="font-semibold text-purple-400 mb-4 text-lg">ℹ️ Sobre o FinanceX</h3>
+                <div class="space-y-2 text-sm text-gray-400">
+                    <p><strong>Versão:</strong> 2.0.0</p>
+                    <p><strong>Desenvolvido por:</strong> Equipe FinanceX</p>
+                    <p><strong>Última atualização:</strong> Janeiro 2025</p>
+                    <p class="mt-4">Sistema de controle financeiro pessoal com recursos avançados de IA, análise preditiva e relatórios automatizados.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -714,103 +822,7 @@
             <div class="flex justify-end mt-6"><button type="button" id="close-view-plan-btn" class="btn btn-ghost">Fechar</button></div>
         </div>
     </div>
-    <div id="settings-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
-        <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-lg">
-            <h2 class="font-mono text-2xl font-bold mb-6 neon-text">Configurações</h2>
-            
-            <!-- Seção API -->
-            <div class="mb-6 p-4 bg-white/5 rounded-lg border border-white/10">
-                <h3 class="font-semibold text-cyan-400 mb-3">🤖 Integração IA</h3>
-                <form id="settings-form">
-                    <div class="mb-4">
-                        <label for="api-key-input" class="form-label">Chave da API do Gemini</label>
-                        <input type="password" id="api-key-input" class="form-input" placeholder="Cole sua chave aqui">
-                        <p class="text-xs text-gray-500 mt-1">Sua chave é salva apenas no seu navegador.</p>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Salvar Chave API</button>
-                </form>
-            </div>
 
-            <!-- Seção Backup -->
-            <div class="mb-6 p-4 bg-white/5 rounded-lg border border-white/10">
-                <h3 class="font-semibold text-green-400 mb-3">💾 Backup de Dados</h3>
-                <div class="space-y-3">
-                    <button type="button" id="export-data-btn" class="btn btn-success w-full flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span>Exportar Dados</span>
-                    </button>
-                    <div class="relative">
-                        <input type="file" id="import-file-input" accept=".json" class="hidden">
-                        <button type="button" id="import-data-btn" class="btn btn-ghost w-full flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                            </svg>
-                            <span>Importar Dados</span>
-                        </button>
-                    </div>
-                    <div class="text-xs text-gray-500">
-                        <p>• Backup automático a cada alteração</p>
-                        <p>• Dados salvos localmente no navegador</p>
-                        <p>• Exporte regularmente para segurança</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Seção Alertas -->
-            <div class="mb-6 p-4 bg-white/5 rounded-lg border border-white/10">
-                <h3 class="font-semibold text-yellow-400 mb-3">🔔 Alertas</h3>
-                <div class="space-y-3">
-                    <label class="flex items-center space-x-3">
-                        <input type="checkbox" id="budget-alerts-enabled" class="form-checkbox">
-                        <span class="text-sm">Alertas de orçamento (80% do limite)</span>
-                    </label>
-                    <label class="flex items-center space-x-3">
-                        <input type="checkbox" id="backup-reminders-enabled" class="form-checkbox">
-                        <span class="text-sm">Lembrete de backup semanal</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Seção Email -->
-            <div class="mb-6 p-4 bg-white/5 rounded-lg border border-white/10">
-                <h3 class="font-semibold text-blue-400 mb-3">📧 Relatórios por Email</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label for="user-email" class="form-label">Seu Email</label>
-                        <input type="email" id="user-email" class="form-input" placeholder="seu@email.com">
-                    </div>
-                    <div>
-                        <label for="emailjs-service-id" class="form-label">Service ID (EmailJS)</label>
-                        <input type="text" id="emailjs-service-id" class="form-input" placeholder="service_xxxxxxx">
-                    </div>
-                    <div>
-                        <label for="emailjs-template-id" class="form-label">Template ID (EmailJS)</label>
-                        <input type="text" id="emailjs-template-id" class="form-input" placeholder="template_xxxxxxx">
-                    </div>
-                    <div>
-                        <label for="emailjs-public-key" class="form-label">Public Key (EmailJS)</label>
-                        <input type="text" id="emailjs-public-key" class="form-input" placeholder="xxxxxxxxxxxxxxxx">
-                    </div>
-                    <label class="flex items-center space-x-3">
-                        <input type="checkbox" id="monthly-reports-enabled" class="form-checkbox">
-                        <span class="text-sm">Enviar relatório mensal automaticamente</span>
-                    </label>
-                    <button type="button" id="send-test-email-btn" class="btn btn-primary w-full">Enviar Email de Teste</button>
-                    <div class="text-xs text-gray-500">
-                        <p>• Configure uma conta gratuita no EmailJS</p>
-                        <p>• Crie um template de email personalizado</p>
-                        <p>• Mantenha suas credenciais seguras</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-end space-x-4">
-                <button type="button" id="cancel-settings-btn" class="btn btn-ghost">Fechar</button>
-            </div>
-        </div>
-    </div>
     <div id="category-manager-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
         <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-lg">
             <div class="flex justify-between items-center mb-6">
@@ -1098,7 +1110,8 @@
 
             function getCategoryById(id) { return categories.find(c => c.id === id); }
             function getCategoryColor(categoryName) {
-            const category = window.categories.find(c => c.name === categoryName);
+            if (!categories || categories.length === 0) return '#6b7280';
+            const category = categories.find(c => c.name === categoryName);
             return category ? category.color : '#6b7280';
         }
         
@@ -1111,39 +1124,84 @@
             return (yiq >= 128) ? '#000000' : '#FFFFFF';
         }
 
-            function addCategory(categoryData) {
-                categories.push({ id: 'cat-' + Date.now(), ...categoryData });
-                saveAndRefresh();
+            async function addCategory(categoryData) {
+                if (!currentUser) return;
+                try {
+                    const docRef = doc(collection(db, `users/${currentUser.uid}/categories`));
+                    await setDoc(docRef, categoryData);
+                    showNotification('Categoria adicionada com sucesso!', 'success');
+                } catch (error) {
+                    console.error('Erro ao adicionar categoria:', error);
+                    showNotification('Erro ao adicionar categoria.', 'error');
+                }
             }
 
-            function updateCategory(id, updatedData) {
-                const index = categories.findIndex(c => c.id === id);
-                if (index !== -1) {
-                    const oldCategoryName = categories[index].name;
-                    const newCategoryName = updatedData.name;
-                    categories[index] = { ...categories[index], ...updatedData };
-                    if (oldCategoryName !== newCategoryName) {
-                        transactions.forEach(t => { if (t.category === oldCategoryName) t.category = newCategoryName; });
+            async function updateCategory(id, updatedData) {
+                if (!currentUser) return;
+                try {
+                    const docRef = doc(db, `users/${currentUser.uid}/categories`, id);
+                    await setDoc(docRef, updatedData, { merge: true });
+                    
+                    // Atualizar transações se o nome da categoria mudou
+                    const category = categories.find(c => c.id === id);
+                    if (category && category.name !== updatedData.name) {
+                        const batch = writeBatch(db);
+                        const transactionsToUpdate = transactions.filter(t => t.category === category.name);
+                        
+                        transactionsToUpdate.forEach(transaction => {
+                            const transactionRef = doc(db, `users/${currentUser.uid}/transactions`, transaction.id);
+                            batch.update(transactionRef, { category: updatedData.name });
+                        });
+                        
+                        await batch.commit();
                     }
-                    saveAndRefresh();
+                    
+                    showNotification('Categoria atualizada com sucesso!', 'success');
+                } catch (error) {
+                    console.error('Erro ao atualizar categoria:', error);
+                    showNotification('Erro ao atualizar categoria.', 'error');
                 }
             }
             
-            function deleteCategory(id) {
+            async function deleteCategory(id) {
+                if (!currentUser) return;
                 const categoryToDelete = getCategoryById(id);
                 if (!categoryToDelete) return;
-                let othersCategory = categories.find(c => c.name.toLowerCase() === 'outros');
-                if (!othersCategory) {
-                    othersCategory = { id: 'cat-' + Date.now(), name: 'Outros', color: '#6b7280' };
-                    categories.push(othersCategory);
-                }
+                
                 if (categoryToDelete.name.toLowerCase() === 'outros') {
-                    alert('A categoria "Outros" não pode ser excluída.');
+                    showNotification('A categoria "Outros" não pode ser excluída.', 'error');
                     return;
                 }
-                transactions.forEach(t => { if(t.category === categoryToDelete.name) t.category = othersCategory.name; });
-                categories = categories.filter(c => c.id !== id);
-                saveAndRefresh();
+                
+                try {
+                    // Verificar se existe categoria "Outros", se não, criar
+                    let othersCategory = categories.find(c => c.name.toLowerCase() === 'outros');
+                    if (!othersCategory) {
+                        const othersDocRef = doc(collection(db, `users/${currentUser.uid}/categories`));
+                        const othersData = { name: 'Outros', color: '#6b7280' };
+                        await setDoc(othersDocRef, othersData);
+                        othersCategory = { id: othersDocRef.id, ...othersData };
+                    }
+                    
+                    // Atualizar transações que usam esta categoria
+                    const batch = writeBatch(db);
+                    const transactionsToUpdate = transactions.filter(t => t.category === categoryToDelete.name);
+                    
+                    transactionsToUpdate.forEach(transaction => {
+                        const transactionRef = doc(db, `users/${currentUser.uid}/transactions`, transaction.id);
+                        batch.update(transactionRef, { category: othersCategory.name });
+                    });
+                    
+                    // Deletar a categoria
+                    const categoryRef = doc(db, `users/${currentUser.uid}/categories`, id);
+                    batch.delete(categoryRef);
+                    
+                    await batch.commit();
+                    showNotification('Categoria excluída com sucesso!', 'success');
+                } catch (error) {
+                    console.error('Erro ao excluir categoria:', error);
+                    showNotification('Erro ao excluir categoria.', 'error');
+                }
             }
             
             function getBudgetForCategory(categoryName, monthYear) {
@@ -1314,8 +1372,8 @@
         }
 
             function updateUI() {
-            if (!currentUser || !window.transactions) return;
-            window.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (!currentUser || !transactions) return;
+        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             updateSummary();
             applyFilters(); // Isso também renderiza a lista de transações
             updateCharts();
@@ -1369,8 +1427,8 @@
         }
         
         function calculateSavingsSuggestion() {
-            const totalGoals = (window.goals || []).reduce((sum, goal) => sum + goal.targetAmount, 0);
-            const totalSaved = (window.goals || []).reduce((sum, goal) => sum + goal.savedAmount, 0);
+            const totalGoals = (goals || []).reduce((sum, goal) => sum + goal.targetAmount, 0);
+            const totalSaved = (goals || []).reduce((sum, goal) => sum + goal.savedAmount, 0);
             const remaining = totalGoals - totalSaved;
             
             if (remaining <= 0) return 'Metas atingidas! 🎉';
@@ -1439,7 +1497,7 @@
             
             function updateSummary() {   
             const cycle = getCurrentFinancialCycle();
-            const cycleTransactions = window.transactions.filter(t => t.date >= cycle.start && t.date <= cycle.end);
+            const cycleTransactions = transactions.filter(t => t.date >= cycle.start && t.date <= cycle.end);
             const totalIncome = cycleTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);   
             const totalExpense = cycleTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);   
             const balance = totalIncome - totalExpense;
@@ -1449,10 +1507,10 @@
         }
             
             function updateNetWorthCard() {
-            const totalIncomeAllTime = window.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-            const totalExpenseAllTime = window.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            const totalIncomeAllTime = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const totalExpenseAllTime = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
             const currentBalance = totalIncomeAllTime - totalExpenseAllTime;
-            const totalInGoals = (window.goals || []).reduce((sum, goal) => sum + goal.savedAmount, 0);
+            const totalInGoals = (goals || []).reduce((sum, goal) => sum + goal.savedAmount, 0);
             const netWorth = currentBalance + totalInGoals;
 
             document.getElementById('total-in-goals').textContent = formatCurrency(totalInGoals);
@@ -1483,11 +1541,11 @@
             function renderGoals() { 
             const listEl = document.getElementById('goals-list'); 
             listEl.innerHTML = ''; 
-            if (!window.goals || window.goals.length === 0) { 
+            if (!goals || goals.length === 0) { 
                 listEl.innerHTML = '<p class="text-center col-span-full">Crie seu primeiro cofrinho para começar a poupar!</p>'; 
                 return; 
             } 
-            window.goals.forEach(goal => { 
+            goals.forEach(goal => { 
                 const progress = goal.targetAmount > 0 ? (goal.savedAmount / goal.targetAmount) * 100 : 0; 
                 const card = document.createElement('div'); 
                 card.className = 'glass-card flex flex-col justify-between'; 
@@ -1530,7 +1588,7 @@
             const ctx = document.getElementById('expenseChart').getContext('2d');
             
             const cycle = getCurrentFinancialCycle();
-            const cycleTransactions = window.transactions.filter(t => t.date >= cycle.start && t.date <= cycle.end);
+            const cycleTransactions = transactions.filter(t => t.date >= cycle.start && t.date <= cycle.end);
 
             const expenseData = cycleTransactions.filter(t => t.type === 'expense').reduce((acc, t) => { acc[t.category] = (acc[t.category] || 0) + t.amount; return acc; }, {});
             const labels = Object.keys(expenseData);
@@ -1540,40 +1598,50 @@
             if (expenseChart) expenseChart.destroy();
 
             expenseChart = new Chart(ctx, { 
-                type: 'doughnut', 
+                type: 'bar', 
                 data: { 
                     labels: labels.length > 0 ? labels : ['Sem despesas'], 
                     datasets: [{ 
+                        label: 'Despesas',
                         data: data.length > 0 ? data : [1], 
                         backgroundColor: backgroundColors.length > 0 ? backgroundColors : ['#374151'], 
-                        borderColor: '#0f0f23', 
-                        borderWidth: 4 
+                        borderColor: backgroundColors.length > 0 ? backgroundColors : ['#374151'], 
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false
                     }] 
                 }, 
                 options: { 
                     responsive: true, 
-                    maintainAspectRatio: false, 
+                    maintainAspectRatio: false,
+                    indexAxis: 'x',
+                    scales: {
+                        x: {
+                            ticks: { color: '#a0a0a0', font: { family: "'Inter', sans-serif" } },
+                            grid: { color: 'rgba(0, 212, 255, 0.1)' }
+                        },
+                        y: {
+                            ticks: { 
+                                color: '#a0a0a0', 
+                                font: { family: "'Inter', sans-serif" },
+                                callback: function(value) { return formatCurrency(value); }
+                            },
+                            grid: { color: 'rgba(0, 212, 255, 0.1)' }
+                        }
+                    },
                     plugins: { 
                         datalabels: {
-                            formatter: (value, context) => {
-                                if (!context.chart.data.datasets[0].data || context.chart.data.datasets[0].data.length === 0) return '';
-                                const sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                if (sum === 0) return '';
-                                const percentage = (value / sum * 100);
-                                return percentage > 5 ? percentage.toFixed(0) + '%' : '';
-                            },
-                            color: '#fff',
-                            textStrokeColor: 'black',
-                            textStrokeWidth: 2,
-                            font: { weight: 'bold', size: 14, family: "'Inter', sans-serif" }
+                            display: false
                         },
                         legend: { 
-                            position: 'bottom', 
-                            labels: { padding: 20, color: legendColor, font: { family: "'Inter', sans-serif" } } 
+                            display: false
                         }, 
-                        tooltip: { callbacks: { label: context => (context.label || '') + ': ' + formatCurrency(context.parsed) } } 
-                    }, 
-                    cutout: '60%' 
+                        tooltip: { 
+                            callbacks: { 
+                                label: context => context.dataset.label + ': ' + formatCurrency(context.parsed.y) 
+                            } 
+                        } 
+                    }
                 } 
             });
         }
@@ -1588,7 +1656,7 @@
             const startDate = new Date(cycle.start + 'T00:00:00');
             const endDate = new Date(cycle.end + 'T00:00:00');
 
-            const balanceBeforeCycle = window.transactions.filter(t => new Date(t.date) < startDate).reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0);
+            const balanceBeforeCycle = transactions.filter(t => new Date(t.date) < startDate).reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0);
 
             const balanceHistory = [];
             let cumulativeBalance = balanceBeforeCycle;
@@ -1597,7 +1665,7 @@
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 labels.push(`${d.getDate()}/${d.getMonth() + 1}`);
                 const dateStr = d.toISOString().split('T')[0];
-                const dailyNet = window.transactions.filter(t => t.date === dateStr).reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0);
+                const dailyNet = transactions.filter(t => t.date === dateStr).reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0);
                 cumulativeBalance += dailyNet;
                 balanceHistory.push(parseFloat(cumulativeBalance.toFixed(2)));
             }
@@ -1611,9 +1679,9 @@
             const legendColor = '#d1d5db'; 
             const ctx = document.getElementById('goalsChart').getContext('2d'); 
             if (goalsChart) { goalsChart.destroy(); } 
-            const labels = (window.goals || []).map(g => g.name); 
-            const savedData = (window.goals || []).map(g => g.savedAmount); 
-            const remainingData = (window.goals || []).map(g => Math.max(0, g.targetAmount - g.savedAmount)); 
+            const labels = (goals || []).map(g => g.name);
+            const savedData = (goals || []).map(g => g.savedAmount);
+            const remainingData = (goals || []).map(g => Math.max(0, g.targetAmount - g.savedAmount)); 
             goalsChart = new Chart(ctx, { type: 'bar', data: { labels: labels.length > 0 ? labels : ['Nenhum cofrinho'], datasets: [ { label: 'Valor Guardado', data: labels.length > 0 ? savedData : [0], backgroundColor: '#3b82f6', }, { label: 'Falta Atingir', data: labels.length > 0 ? remainingData : [1], backgroundColor: 'rgba(59, 130, 246, 0.3)', } ] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true, ticks: { color: ticksColor, callback: value => formatCurrency(value) }, grid: { color: gridColor } }, y: { stacked: true, ticks: { color: ticksColor }, grid: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { color: legendColor, font: { family: "'Inter', sans-serif" } } }, tooltip: { callbacks: { label: function(context) { const label = context.dataset.label || ''; if (label) { return `${label}: ${formatCurrency(context.parsed.x)}`; } return formatCurrency(context.parsed.x); } } } } } }); 
         }  
     function renderBudgetsPage() {
@@ -1719,7 +1787,7 @@
         addFunds: document.getElementById('add-funds-modal'),
         report: document.getElementById('report-modal'),
         viewPlan: document.getElementById('view-plan-modal'),
-        settings: document.getElementById('settings-modal'),
+
         categoryManager: document.getElementById('category-manager-modal'),
         categoryEdit: document.getElementById('category-edit-modal'),
         budget: document.getElementById('budget-modal')
@@ -1730,17 +1798,26 @@
         document.getElementById('nav-budgets').addEventListener('click', () => switchPage('budgets'));
         document.getElementById('nav-calendar').addEventListener('click', () => switchPage('calendar'));
         document.getElementById('nav-goals').addEventListener('click', () => switchPage('goals'));
+        document.getElementById('nav-settings').addEventListener('click', () => switchPage('settings'));
         document.getElementById('add-income-btn').addEventListener('click', () => openTransactionModal('income'));
         document.getElementById('add-expense-btn').addEventListener('click', () => openTransactionModal('expense'));
         document.getElementById('manage-recurring-btn').addEventListener('click', openRecurringModal);
         document.getElementById('generate-report-btn').addEventListener('click', openReportModal);
-        document.getElementById('settings-btn').addEventListener('click', function() {
-                openSettingsModal();
-                loadSettingsModal();
-            });
+
         document.getElementById('export-data-btn').addEventListener('click', exportData);
         document.getElementById('import-data-btn').addEventListener('click', () => document.getElementById('import-file-input').click());
         document.getElementById('import-file-input').addEventListener('change', importData);
+        
+        // Event listeners para a página de configurações
+        document.getElementById('settings-form').addEventListener('submit', handleSettingsFormSubmit);
+        document.getElementById('budget-alerts-enabled').addEventListener('change', saveSettingsPage);
+        document.getElementById('backup-reminders-enabled').addEventListener('change', saveSettingsPage);
+        document.getElementById('user-email').addEventListener('blur', saveSettingsPage);
+        document.getElementById('emailjs-service-id').addEventListener('blur', saveSettingsPage);
+        document.getElementById('emailjs-template-id').addEventListener('blur', saveSettingsPage);
+        document.getElementById('emailjs-public-key').addEventListener('blur', saveSettingsPage);
+        document.getElementById('monthly-reports-enabled').addEventListener('change', saveSettingsPage);
+        document.getElementById('send-test-email-btn').addEventListener('click', sendTestEmail);
         document.getElementById('transaction-form').addEventListener('submit', handleFormSubmit);
         document.getElementById('cancel-btn').addEventListener('click', closeAllModals);
         document.getElementById('confirm-delete-btn').addEventListener('click', handleDeleteConfirm);
@@ -1761,8 +1838,7 @@
         document.getElementById('suggest-category-btn').addEventListener('click', handleSuggestCategoryClick);
         document.getElementById('create-plan-btn').addEventListener('click', handleCreatePlanClick);
         document.getElementById('close-view-plan-btn').addEventListener('click', closeAllModals);
-        document.getElementById('settings-form').addEventListener('submit', handleSettingsFormSubmit);
-        document.getElementById('cancel-settings-btn').addEventListener('click', closeAllModals);
+
         const filterForm = document.getElementById('filter-form');
         filterForm.addEventListener('submit', (e) => { e.preventDefault(); applyFilters(); });
         const clearFiltersBtn = document.getElementById('clear-filters-btn');
@@ -1816,10 +1892,17 @@
         document.getElementById('goals-page').classList.toggle('hidden', page !== 'goals');
         document.getElementById('budgets-page').classList.toggle('hidden', page !== 'budgets');
         document.getElementById('calendar-page').classList.toggle('hidden', page !== 'calendar');
+        document.getElementById('settings-page').classList.toggle('hidden', page !== 'settings');
         document.getElementById('nav-dashboard').classList.toggle('active', page === 'dashboard');
         document.getElementById('nav-goals').classList.toggle('active', page === 'goals');
         document.getElementById('nav-budgets').classList.toggle('active', page === 'budgets');
         document.getElementById('nav-calendar').classList.toggle('active', page === 'calendar');
+        document.getElementById('nav-settings').classList.toggle('active', page === 'settings');
+        
+        // Carregar configurações quando a página for acessada
+        if (page === 'settings') {
+            loadSettingsPage();
+        }
     }
     function openTransactionModal(type, transaction = null) { 
         const form = document.getElementById('transaction-form'); 
@@ -1891,7 +1974,7 @@
         else { modalTitle.textContent = 'Nova Categoria'; idInput.value = ''; colorInput.value = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'); }
         openModal(modals.categoryEdit);
     }
-    function handleCategoryFormSubmit(e) { e.preventDefault(); const id = document.getElementById('category-edit-id').value; const name = document.getElementById('category-name-input').value; const color = document.getElementById('category-color-input').value; if (id) { updateCategory(id, { name, color }); } else { addCategory({ name, color }); } closeAllModals(); openCategoryManagerModal(); }
+    async function handleCategoryFormSubmit(e) { e.preventDefault(); const id = document.getElementById('category-edit-id').value; const name = document.getElementById('category-name-input').value; const color = document.getElementById('category-color-input').value; if (id) { await updateCategory(id, { name, color }); } else { await addCategory({ name, color }); } closeAllModals(); openCategoryManagerModal(); }
     function renderCategoryList() {
         const listEl = document.getElementById('category-list'); listEl.innerHTML = ''; if (categories.length === 0) { listEl.innerHTML = '<p class="text-center text-gray-500">Nenhuma categoria encontrada.</p>'; return; }
         categories.sort((a,b) => a.name.localeCompare(b.name)).forEach(cat => {
@@ -2023,17 +2106,7 @@
     function handleGoalsListClick(e) { const targetButton = e.target.closest('button'); if (!targetButton) return; const id = targetButton.dataset.id; if (targetButton.classList.contains('delete-goal-btn')) openDeleteModal(id, 'goal'); if (targetButton.classList.contains('add-funds-btn')) openAddFundsModal(id); if (targetButton.classList.contains('view-plan-btn')) openViewPlanModal(id); }
     function updateDateLabel() { const dateLabel = document.getElementById('date-label'); if (document.getElementById('is-installment').checked) dateLabel.textContent = 'Data da 1ª Parcela'; else if (document.getElementById('is-recurring').checked) dateLabel.textContent = 'Data de Início da Recorrência'; else dateLabel.textContent = 'Data'; }
     function handleCheckboxChange(e) { const isInstallment = document.getElementById('is-installment'); const isRecurring = document.getElementById('is-recurring'); if (e.target === isInstallment && isInstallment.checked) isRecurring.checked = false; if (e.target === isRecurring && isRecurring.checked) isInstallment.checked = false; document.getElementById('installments-count-container').classList.toggle('hidden', !isInstallment.checked); updateDateLabel(); }
-    function handleSettingsFormSubmit(e) { 
-        e.preventDefault(); 
-        const newKey = document.getElementById('api-key-input').value; 
-        localStorage.setItem(API_KEY, newKey); 
-        
-        // Salvar configurações de alertas e backup
-        saveSettingsFromModal();
-        
-        closeAllModals(); 
-        showNotification('Configurações salvas com sucesso!', 'success');
-    }
+
     
     // --- BACKUP E EXPORTAÇÃO/IMPORTAÇÃO ---
     function createBackup() {
@@ -2219,25 +2292,88 @@
         if (budgetCheckbox) budgetCheckbox.checked = settings.budgetAlerts;
         if (backupCheckbox) backupCheckbox.checked = settings.weeklyBackup;
         
-        // Carregar configurações de email
-        loadEmailSettingsModal();
+
     }
     
-    function saveSettingsFromModal() {
-        const budgetCheckbox = document.getElementById('budget-alerts');
-        const backupCheckbox = document.getElementById('weekly-backup');
+    function loadSettingsPage() {
+        const userPrefix = `finance_data_${currentUser.email}`;
         
-        const settings = {
-            budgetAlerts: budgetCheckbox ? budgetCheckbox.checked : true,
-            weeklyBackup: backupCheckbox ? backupCheckbox.checked : true
-        };
+        // Carregar chave da API
+        const apiKey = localStorage.getItem(`${userPrefix}_gemini_api_key`) || '';
+        document.getElementById('api-key-input').value = apiKey;
         
-        saveSettings(settings);
+        // Carregar configurações de alertas
+        const budgetAlerts = localStorage.getItem(`${userPrefix}_budget_alerts`) === 'true';
+        const backupReminders = localStorage.getItem(`${userPrefix}_backup_reminders`) === 'true';
+        
+        document.getElementById('budget-alerts-enabled').checked = budgetAlerts;
+        document.getElementById('backup-reminders-enabled').checked = backupReminders;
+
+        // Carregar configurações de email
+        document.getElementById('user-email').value = localStorage.getItem(`${userPrefix}_user_email`) || '';
+        document.getElementById('emailjs-service-id').value = localStorage.getItem(`${userPrefix}_emailjs_service_id`) || '';
+        document.getElementById('emailjs-template-id').value = localStorage.getItem(`${userPrefix}_emailjs_template_id`) || '';
+        document.getElementById('emailjs-public-key').value = localStorage.getItem(`${userPrefix}_emailjs_public_key`) || '';
+        
+        const monthlyReports = localStorage.getItem(`${userPrefix}_monthly_reports`) === 'true';
+        document.getElementById('monthly-reports-enabled').checked = monthlyReports;
+    }
+    
+    function saveSettingsPage() {
+        const userPrefix = `finance_data_${currentUser.email}`;
+        
+        // Salvar configurações de alertas
+        const budgetAlerts = document.getElementById('budget-alerts-enabled').checked;
+        const backupReminders = document.getElementById('backup-reminders-enabled').checked;
+        
+        localStorage.setItem(`${userPrefix}_budget_alerts`, budgetAlerts);
+        localStorage.setItem(`${userPrefix}_backup_reminders`, backupReminders);
         
         // Salvar configurações de email
-        saveEmailSettingsFromModal();
+        localStorage.setItem(`${userPrefix}_user_email`, document.getElementById('user-email').value);
+        localStorage.setItem(`${userPrefix}_emailjs_service_id`, document.getElementById('emailjs-service-id').value);
+        localStorage.setItem(`${userPrefix}_emailjs_template_id`, document.getElementById('emailjs-template-id').value);
+        localStorage.setItem(`${userPrefix}_emailjs_public_key`, document.getElementById('emailjs-public-key').value);
+        localStorage.setItem(`${userPrefix}_monthly_reports`, document.getElementById('monthly-reports-enabled').checked);
         
         showNotification('Configurações salvas com sucesso!', 'success');
+    }
+    
+    function handleSettingsFormSubmit(e) {
+        e.preventDefault();
+        const userPrefix = `finance_data_${currentUser.email}`;
+        const newKey = document.getElementById('api-key-input').value;
+        localStorage.setItem(`${userPrefix}_gemini_api_key`, newKey);
+        showNotification('Chave API salva com sucesso!', 'success');
+    }
+    
+    function sendTestEmail() {
+        const serviceId = document.getElementById('emailjs-service-id').value;
+        const templateId = document.getElementById('emailjs-template-id').value;
+        const publicKey = document.getElementById('emailjs-public-key').value;
+        const userEmail = document.getElementById('user-email').value;
+
+        if (!serviceId || !templateId || !publicKey || !userEmail) {
+            showNotification('Preencha todas as configurações de email primeiro.', 'error');
+            return;
+        }
+
+        emailjs.init(publicKey);
+        
+        const templateParams = {
+            to_email: userEmail,
+            subject: 'Teste - FinanceX',
+            message: 'Este é um email de teste do sistema FinanceX. Se você recebeu esta mensagem, suas configurações estão corretas!'
+        };
+
+        emailjs.send(serviceId, templateId, templateParams)
+            .then(() => {
+                showNotification('Email de teste enviado com sucesso!', 'success');
+            })
+            .catch((error) => {
+                showNotification('Erro ao enviar email de teste.', 'error');
+                console.error('Erro:', error);
+            });
     }
     
     // Substituir saveAndRefresh para usar backup automático
@@ -2482,25 +2618,7 @@
         }
     }
     
-    function loadEmailSettingsModal() {
-        const settings = getEmailSettings();
-        document.getElementById('user-email').value = settings.userEmail || '';
-        document.getElementById('emailjs-service-id').value = settings.serviceId || '';
-        document.getElementById('emailjs-template-id').value = settings.templateId || '';
-        document.getElementById('emailjs-public-key').value = settings.publicKey || '';
-        document.getElementById('monthly-reports-enabled').checked = settings.monthlyReportsEnabled || false;
-    }
-    
-    function saveEmailSettingsFromModal() {
-        const settings = {
-            userEmail: document.getElementById('user-email').value,
-            serviceId: document.getElementById('emailjs-service-id').value,
-            templateId: document.getElementById('emailjs-template-id').value,
-            publicKey: document.getElementById('emailjs-public-key').value,
-            monthlyReportsEnabled: document.getElementById('monthly-reports-enabled').checked
-        };
-        saveEmailSettings(settings);
-    }
+
     
     async function generateMonthlyReport() {
         const currentDate = new Date();
@@ -2575,44 +2693,7 @@
         }
     }
     
-    async function sendTestEmail() {
-        const settings = {
-            userEmail: document.getElementById('user-email').value,
-            serviceId: document.getElementById('emailjs-service-id').value,
-            templateId: document.getElementById('emailjs-template-id').value,
-            publicKey: document.getElementById('emailjs-public-key').value
-        };
-        
-        if (!settings.userEmail || !settings.serviceId || !settings.templateId || !settings.publicKey) {
-            alert('Por favor, preencha todos os campos de configuração de email.');
-            return;
-        }
-        
-        try {
-            // Inicializar EmailJS com a chave fornecida
-            emailjs.init(settings.publicKey);
-            
-            const templateParams = {
-                to_email: settings.userEmail,
-                user_name: 'Usuário Teste',
-                month: 'Teste',
-                total_income: 'R$ 5.000,00',
-                total_expenses: 'R$ 3.500,00',
-                balance: 'R$ 1.500,00',
-                balance_status: 'positivo',
-                top_categories: 'Alimentação: R$ 800,00\nTransporte: R$ 600,00\nLazer: R$ 400,00',
-                transaction_count: '25',
-                generated_date: new Date().toLocaleDateString('pt-BR')
-            };
-            
-            await emailjs.send(settings.serviceId, settings.templateId, templateParams);
-            
-            showNotification('Email de teste enviado com sucesso!', 'success');
-        } catch (error) {
-            console.error('Erro ao enviar email de teste:', error);
-            showNotification('Erro ao enviar email de teste. Verifique suas configurações.', 'error');
-        }
-    }
+
     
     // Verificar se deve enviar relatório mensal automaticamente
     function checkMonthlyReport() {
@@ -2644,7 +2725,8 @@
 
     // --- SERVICE WORKER E CONECTIVIDADE ---
     async function registerServiceWorker() {
-        if ('serviceWorker' in navigator) {
+        // Só registra o service worker se estiver em um servidor HTTP/HTTPS
+        if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
             try {
                 const registration = await navigator.serviceWorker.register('./sw.js');
                 console.log('Service Worker registrado com sucesso:', registration.scope);
@@ -2765,7 +2847,7 @@
     }
 
     // --- INITIALIZATION ---
-    startApp(); // Tenta inicializar com a sessão existente
+    // A inicialização é feita automaticamente pelo Firebase onAuthStateChanged
 
     </script>
 </body>
