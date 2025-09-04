@@ -688,9 +688,192 @@
             transition: all 0.3s ease;
         }
         
+        /* === OTIMIZAÇÕES MOBILE AVANÇADAS === */
         @media (max-width: 768px) {
+            /* Layout principal mobile */
             .dashboard-grid {
                 grid-template-columns: 1fr !important;
+                gap: var(--space-md);
+                padding: var(--space-sm);
+            }
+            
+            /* Container principal mobile */
+            .container {
+                padding: var(--space-sm) !important;
+                margin: 0 !important;
+            }
+            
+            /* Cards mobile */
+            .glass-card {
+                padding: var(--space-md) !important;
+                margin-bottom: var(--space-md) !important;
+                border-radius: var(--radius-md) !important;
+            }
+            
+            /* Navegação mobile */
+            .nav-btn {
+                padding: var(--space-sm) var(--space-md) !important;
+                font-size: 12px !important;
+                min-height: 44px !important;
+            }
+            
+            /* Títulos mobile */
+            h1.neon-text {
+                font-size: 1.875rem !important;
+                line-height: 1.2 !important;
+            }
+            
+            h2.neon-text {
+                font-size: 1.5rem !important;
+            }
+            
+            h3.neon-text {
+                font-size: 1.125rem !important;
+            }
+            
+            /* Botões mobile touch-friendly */
+            .btn {
+                min-height: 44px !important;
+                padding: var(--space-md) var(--space-lg) !important;
+                font-size: 14px !important;
+                border-radius: var(--radius-lg) !important;
+            }
+            
+            .btn-sm {
+                min-height: 40px !important;
+                padding: var(--space-sm) var(--space-md) !important;
+                font-size: 12px !important;
+            }
+            
+            /* Formulários mobile */
+            .form-input, .form-select {
+                padding: var(--space-md) !important;
+                font-size: 16px !important; /* Evita zoom no iOS */
+                border-radius: var(--radius-md) !important;
+                min-height: 44px !important;
+            }
+            
+            /* Grid responsivo mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-md) !important;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            /* Espaçamentos mobile */
+            .space-x-2 > * + * {
+                margin-left: var(--space-sm) !important;
+            }
+            
+            .space-x-4 > * + * {
+                margin-left: var(--space-md) !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: var(--space-md) !important;
+            }
+            
+            /* Modais mobile */
+            .modal {
+                margin: var(--space-sm) !important;
+                max-height: calc(100vh - var(--space-lg)) !important;
+                border-radius: var(--radius-lg) !important;
+            }
+            
+            /* Tabelas mobile */
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            
+            /* Gráficos mobile */
+            .chart-container {
+                height: 250px !important;
+            }
+            
+            /* Texto mobile */
+            .text-sm {
+                font-size: 12px !important;
+            }
+            
+            .text-xs {
+                font-size: 10px !important;
+            }
+        }
+        
+        /* === OTIMIZAÇÕES PARA TELAS MUITO PEQUENAS === */
+        @media (max-width: 480px) {
+            /* Layout ultra compacto */
+            .container {
+                padding: var(--space-xs) !important;
+            }
+            
+            .glass-card {
+                padding: var(--space-sm) !important;
+                margin-bottom: var(--space-sm) !important;
+            }
+            
+            /* Navegação compacta */
+            .nav-btn {
+                padding: var(--space-xs) var(--space-sm) !important;
+                font-size: 11px !important;
+            }
+            
+            /* Títulos compactos */
+            h1.neon-text {
+                font-size: 1.5rem !important;
+            }
+            
+            h2.neon-text {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Botões compactos */
+            .btn {
+                padding: var(--space-sm) var(--space-md) !important;
+                font-size: 13px !important;
+            }
+            
+            /* Grid ultra responsivo */
+            .grid-cols-4 {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        /* === MELHORIAS DE TOUCH === */
+        @media (hover: none) and (pointer: coarse) {
+            /* Dispositivos touch */
+            .btn:hover {
+                transform: none !important;
+            }
+            
+            .btn:active {
+                transform: scale(0.98) !important;
+                transition: transform 0.1s ease !important;
+            }
+            
+            .glass-card:hover {
+                transform: none !important;
+            }
+            
+            .nav-btn:hover {
+                transform: none !important;
+            }
+            
+            .nav-btn:active {
+                transform: scale(0.95) !important;
+                transition: transform 0.1s ease !important;
             }
         }
         
@@ -766,6 +949,78 @@
             50% { transform: scale(1.05); }
         }
 
+        /* === NAVEGAÇÃO MOBILE === */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            top: var(--space-md);
+            right: var(--space-md);
+            z-index: 1000;
+            background: var(--glass-bg-strong);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            color: var(--text-primary);
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+        
+        .mobile-nav-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--glass-bg-strong);
+            border-left: 1px solid var(--border-accent);
+            z-index: 1001;
+            padding: var(--space-xl) var(--space-lg);
+            backdrop-filter: blur(16px);
+            transition: right var(--transition-slow);
+            overflow-y: auto;
+        }
+        
+        .mobile-nav-menu.active {
+            right: 0;
+        }
+        
+        .mobile-nav-menu .nav-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: var(--space-md);
+            text-align: left;
+            border-radius: var(--radius-md);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: block;
+            }
+            
+            .nav-container {
+                display: none !important;
+            }
+            
+            .mobile-nav-overlay.active,
+            .mobile-nav-menu {
+                display: block;
+            }
+        }
+        
         /* Navegação */
         /* === BOTÕES DE NAVEGAÇÃO REDESENHADOS === */
         .nav-btn {
@@ -911,8 +1166,34 @@
     
             </div>
         </header>
+        
+        <!-- Botão Menu Mobile -->
+        <button id="mobile-nav-toggle" class="mobile-nav-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        
+        <!-- Overlay Mobile -->
+        <div id="mobile-nav-overlay" class="mobile-nav-overlay"></div>
+        
+        <!-- Menu Mobile -->
+        <div id="mobile-nav-menu" class="mobile-nav-menu">
+            <div class="mb-6">
+                <h2 class="neon-text text-lg font-bold mb-4">FinanceX</h2>
+            </div>
+            <nav>
+                <button id="mobile-nav-dashboard" class="nav-btn neon-effect active">📊 Dashboard</button>
+                <button id="mobile-nav-executive" class="nav-btn neon-effect">📈 Executivo</button>
+                <button id="mobile-nav-budgets" class="nav-btn neon-effect">💰 Orçamentos</button>
+                <button id="mobile-nav-calendar" class="nav-btn neon-effect">📅 Calendário</button>
+                <button id="mobile-nav-goals" class="nav-btn neon-effect">🎯 Cofrinhos</button>
+                <button id="mobile-nav-settings" class="nav-btn neon-effect">⚙️ Configurações</button>
+            </nav>
+        </div>
 
-        <nav class="mb-8 p-2 rounded-lg flex flex-wrap space-x-2 justify-center glass">
+        <!-- Navegação Desktop -->
+        <nav class="mb-8 p-2 rounded-lg flex flex-wrap space-x-2 justify-center glass nav-container">
             <button id="nav-dashboard" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold active">Dashboard</button>
             <button id="nav-executive" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold">Executivo</button>
             <button id="nav-budgets" class="nav-btn neon-effect flex-1 py-2 px-4 rounded-md font-semibold">Orçamentos</button>
@@ -1452,23 +1733,23 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="glass-card text-center">
                     <h3 class="text-sm font-medium text-gray-400 mb-2">ROI Mensal</h3>
-                    <p id="monthly-roi" class="text-3xl font-bold text-green-400">+12.5%</p>
+                    <p id="monthly-roi" class="text-3xl font-bold text-green-400">--</p>
                     <p class="text-xs text-gray-500 mt-1">vs mês anterior</p>
                 </div>
                 <div class="glass-card text-center">
                     <h3 class="text-sm font-medium text-gray-400 mb-2">Taxa de Poupança</h3>
-                    <p id="savings-rate" class="text-3xl font-bold text-blue-400">23.8%</p>
+                    <p id="savings-rate" class="text-3xl font-bold text-blue-400">--</p>
                     <p class="text-xs text-gray-500 mt-1">da renda mensal</p>
                 </div>
                 <div class="glass-card text-center">
                     <h3 class="text-sm font-medium text-gray-400 mb-2">Burn Rate</h3>
-                    <p id="burn-rate" class="text-3xl font-bold text-orange-400">R$ 2.850</p>
+                    <p id="burn-rate" class="text-3xl font-bold text-orange-400">--</p>
                     <p class="text-xs text-gray-500 mt-1">gastos/mês</p>
                 </div>
                 <div class="glass-card text-center">
                     <h3 class="text-sm font-medium text-gray-400 mb-2">Score Financeiro</h3>
-                    <p id="financial-score" class="text-3xl font-bold text-purple-400">847</p>
-                    <p class="text-xs text-gray-500 mt-1">Excelente</p>
+                    <p id="financial-score" class="text-3xl font-bold text-purple-400">--</p>
+                    <p class="text-xs text-gray-500 mt-1">Calculando...</p>
                 </div>
             </div>
 
@@ -1509,13 +1790,13 @@
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="text-center p-4 bg-green-500/10 rounded-lg border border-green-400/20">
                             <p class="text-sm text-gray-400">Melhor Mês</p>
-                            <p id="best-month" class="text-lg font-bold text-green-400">Junho 2024</p>
-                            <p id="best-month-value" class="text-sm text-green-300">+R$ 2.450</p>
+                            <p id="best-month" class="text-lg font-bold text-green-400">--</p>
+                            <p id="best-month-value" class="text-sm text-green-300">--</p>
                         </div>
                         <div class="text-center p-4 bg-blue-500/10 rounded-lg border border-blue-400/20">
                             <p class="text-sm text-gray-400">Média Mensal</p>
-                            <p id="average-month" class="text-lg font-bold text-blue-400">R$ 1.850</p>
-                            <p id="average-trend" class="text-sm text-blue-300">↗️ +12% vs ano anterior</p>
+                            <p id="average-month" class="text-lg font-bold text-blue-400">--</p>
+                            <p id="average-trend" class="text-sm text-blue-300">--</p>
                         </div>
                         <div class="text-center p-4 bg-purple-500/10 rounded-lg border border-purple-400/20">
                             <p class="text-sm text-gray-400">Projeção Anual</p>
@@ -2038,9 +2319,58 @@
         </div>
     </div>
     
+    <!-- Modal de Configuração de Limites de Gastos -->
+    <div id="expense-alerts-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
+        <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-lg">
+            <h2 class="font-mono text-2xl font-bold mb-6 neon-text">⚙️ Configurar Limites de Gastos</h2>
+            <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                <div>
+                    <label class="form-label">Limite Diário (R$)</label>
+                    <input type="number" id="daily-limit" class="form-input" placeholder="Ex: 100" step="0.01">
+                    <p class="text-sm text-gray-400 mt-1">Alerta quando gastos do dia excederem este valor</p>
+                </div>
+                
+                <div>
+                    <label class="form-label">Limite Semanal (R$)</label>
+                    <input type="number" id="weekly-limit" class="form-input" placeholder="Ex: 500" step="0.01">
+                    <p class="text-sm text-gray-400 mt-1">Alerta quando gastos da semana excederem este valor</p>
+                </div>
+                
+                <div>
+                    <label class="form-label">Limite Mensal (R$)</label>
+                    <input type="number" id="monthly-limit" class="form-input" placeholder="Ex: 2000" step="0.01">
+                    <p class="text-sm text-gray-400 mt-1">Alerta quando gastos do mês excederem este valor</p>
+                </div>
+                
+                <div>
+                    <label class="form-label">Categorias para Monitorar</label>
+                    <div id="alert-categories-list" class="space-y-2 max-h-32 overflow-y-auto border border-gray-600 rounded-lg p-3">
+                        <!-- Categorias serão carregadas dinamicamente -->
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1">Selecione as categorias que deseja monitorar</p>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <input type="checkbox" id="enable-push-alerts" class="form-checkbox">
+                    <label for="enable-push-alerts" class="text-sm">Receber notificações push</label>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <input type="checkbox" id="enable-sound-alerts" class="form-checkbox">
+                    <label for="enable-sound-alerts" class="text-sm">Alertas sonoros</label>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-6 pt-4 border-t border-cyan-500/20">
+                <button type="button" id="cancel-expense-alerts-btn" class="btn btn-ghost">Cancelar</button>
+                <button type="button" id="save-expense-alerts-btn" class="btn btn-primary">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Modal de Lembrete de Pagamento -->
     <div id="reminder-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
-        <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-md">
+        <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-md max-h-[85vh] overflow-y-auto">
             <h2 id="reminder-modal-title" class="font-mono text-2xl font-bold mb-6 neon-text">Novo Lembrete de Pagamento</h2>
             <form id="reminder-form">
                 <div class="form-group mb-4">
@@ -2091,7 +2421,7 @@
                     <textarea id="reminder-notes" class="form-input w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400" rows="3" placeholder="Notas adicionais sobre este pagamento..."></textarea>
                 </div>
                 <div class="flex justify-end space-x-4">
-                    <button type="button" class="btn btn-ghost" onclick="closeAllModals()">Cancelar</button>
+                    <button type="button" id="cancel-reminder-btn" class="btn btn-ghost">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Salvar Lembrete</button>
                 </div>
             </form>
@@ -2264,6 +2594,9 @@
             
             // Inicializar Sistema de Redefinir Senha
             initializePasswordReset();
+            
+            // Inicializar Navegação Mobile
+            initializeMobileNavigation();
             
             // Setup Firestore Listeners
             const collections = ['transactions', 'goals', 'categories', 'budgets', 'recurringTemplates'];
@@ -5968,7 +6301,8 @@
 
         categoryManager: document.getElementById('category-manager-modal'),
         categoryEdit: document.getElementById('category-edit-modal'),
-        budget: document.getElementById('budget-modal')
+        budget: document.getElementById('budget-modal'),
+        expenseAlerts: document.getElementById('expense-alerts-modal')
     };
     
     function setupEventListeners() {
@@ -6026,6 +6360,9 @@
         document.getElementById('add-reminder-btn').addEventListener('click', () => openReminderModal());
         document.getElementById('reminder-form').addEventListener('submit', handleReminderFormSubmit);
         document.getElementById('save-alert-settings').addEventListener('click', saveReminderAlertSettings);
+        document.getElementById('configure-expense-alerts-btn').addEventListener('click', () => {
+            openExpenseAlertsModal();
+        });
         
         // Event listeners para alertas de gastos excessivos
         document.getElementById('expense-alerts-enabled').addEventListener('change', handleExpenseAlertsToggle);
@@ -6070,6 +6407,7 @@
         document.getElementById('cancel-add-funds-btn').addEventListener('click', closeAllModals);
         document.getElementById('transactions-list').addEventListener('click', handleListClick);
         document.getElementById('goals-list').addEventListener('click', handleGoalsListClick);
+        document.getElementById('category-list').addEventListener('click', handleCategoryListClick);
         document.getElementById('is-installment').addEventListener('change', handleCheckboxChange);
         document.getElementById('is-recurring').addEventListener('change', handleCheckboxChange);
         document.getElementById('cancel-report-btn').addEventListener('click', closeAllModals);
@@ -6105,6 +6443,9 @@
         document.getElementById('manage-budgets-btn').addEventListener('click', openBudgetModal);
         document.getElementById('budget-form').addEventListener('submit', handleBudgetFormSubmit);
         document.getElementById('cancel-budget-btn').addEventListener('click', closeAllModals);
+        document.getElementById('cancel-expense-alerts-btn').addEventListener('click', closeAllModals);
+        document.getElementById('save-expense-alerts-btn').addEventListener('click', saveExpenseAlertsSettings);
+        document.getElementById('cancel-reminder-btn').addEventListener('click', closeAllModals);
         
         // Event listeners para email removidos
         document.getElementById('prev-month-btn').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); });
@@ -6138,6 +6479,9 @@
         document.getElementById('nav-budgets').classList.toggle('active', page === 'budgets');
         document.getElementById('nav-calendar').classList.toggle('active', page === 'calendar');
         document.getElementById('nav-settings').classList.toggle('active', page === 'settings');
+        
+        // Atualizar navegação mobile
+        updateMobileNavigation(page);
         
         // Carregar configurações quando a página for acessada
         if (page === 'settings') {
@@ -7403,6 +7747,137 @@
 
     // --- INITIALIZATION ---
     // A inicialização é feita automaticamente pelo Firebase onAuthStateChanged
+    
+    // === NAVEGAÇÃO MOBILE === //
+    function initializeMobileNavigation() {
+        const mobileToggle = document.getElementById('mobile-nav-toggle');
+        const mobileOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileMenu = document.getElementById('mobile-nav-menu');
+        
+        if (!mobileToggle || !mobileOverlay || !mobileMenu) return;
+        
+        // Toggle do menu mobile
+        mobileToggle.addEventListener('click', () => {
+            mobileOverlay.classList.add('active');
+            mobileMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Fechar menu ao clicar no overlay
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+        
+        // Configurar navegação mobile
+        const mobileNavButtons = {
+            'mobile-nav-dashboard': 'dashboard',
+            'mobile-nav-executive': 'executive',
+            'mobile-nav-budgets': 'budgets',
+            'mobile-nav-calendar': 'calendar',
+            'mobile-nav-goals': 'goals',
+            'mobile-nav-settings': 'settings'
+        };
+        
+        Object.entries(mobileNavButtons).forEach(([buttonId, page]) => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', () => {
+                    switchPage(page);
+                    closeMobileMenu();
+                });
+            }
+        });
+        
+        // Fechar menu com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                closeMobileMenu();
+            }
+        });
+    }
+    
+    function closeMobileMenu() {
+        const mobileOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileMenu = document.getElementById('mobile-nav-menu');
+        
+        if (mobileOverlay) mobileOverlay.classList.remove('active');
+        if (mobileMenu) mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    function updateMobileNavigation(activePage) {
+        // Atualizar navegação mobile
+        const mobileButtons = document.querySelectorAll('#mobile-nav-menu .nav-btn');
+        mobileButtons.forEach(btn => btn.classList.remove('active'));
+        
+        const activeMobileBtn = document.getElementById(`mobile-nav-${activePage}`);
+        if (activeMobileBtn) {
+            activeMobileBtn.classList.add('active');
+        }
+    }
+    
+    // === FUNÇÕES DO MODAL DE LIMITES DE GASTOS === //
+    function openExpenseAlertsModal() {
+        // Carregar configurações atuais
+        loadExpenseAlertsSettings();
+        
+        // Carregar categorias
+        loadAlertCategories();
+        
+        // Abrir modal
+        openModal(modals.expenseAlerts);
+    }
+    
+    function loadExpenseAlertsSettings() {
+        const settings = JSON.parse(localStorage.getItem('expenseAlertsSettings') || '{}');
+        
+        document.getElementById('daily-limit').value = settings.dailyLimit || '';
+        document.getElementById('weekly-limit').value = settings.weeklyLimit || '';
+        document.getElementById('monthly-limit').value = settings.monthlyLimit || '';
+        document.getElementById('enable-push-alerts').checked = settings.enablePushAlerts || false;
+        document.getElementById('enable-sound-alerts').checked = settings.enableSoundAlerts || false;
+    }
+    
+    function loadAlertCategories() {
+        const container = document.getElementById('alert-categories-list');
+        const settings = JSON.parse(localStorage.getItem('expenseAlertsSettings') || '{}');
+        const selectedCategories = settings.selectedCategories || [];
+        
+        container.innerHTML = '';
+        
+        categories.forEach(category => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-2';
+            div.innerHTML = `
+                <input type="checkbox" id="cat-${category.id}" class="form-checkbox" ${selectedCategories.includes(category.id) ? 'checked' : ''}>
+                <span class="w-4 h-4 rounded-full" style="background-color: ${category.color}"></span>
+                <label for="cat-${category.id}" class="text-sm">${category.name}</label>
+            `;
+            container.appendChild(div);
+        });
+    }
+    
+    function saveExpenseAlertsSettings() {
+        const selectedCategories = [];
+        categories.forEach(category => {
+            const checkbox = document.getElementById(`cat-${category.id}`);
+            if (checkbox && checkbox.checked) {
+                selectedCategories.push(category.id);
+            }
+        });
+        
+        const settings = {
+            dailyLimit: parseFloat(document.getElementById('daily-limit').value) || 0,
+            weeklyLimit: parseFloat(document.getElementById('weekly-limit').value) || 0,
+            monthlyLimit: parseFloat(document.getElementById('monthly-limit').value) || 0,
+            selectedCategories: selectedCategories,
+            enablePushAlerts: document.getElementById('enable-push-alerts').checked,
+            enableSoundAlerts: document.getElementById('enable-sound-alerts').checked
+        };
+        
+        localStorage.setItem('expenseAlertsSettings', JSON.stringify(settings));
+        
+        showNotification('Configurações de limites salvas com sucesso!', 'success');
+        closeAllModals();
+    }
 
     </script>
 </body>
