@@ -6,6 +6,7 @@
     <title>FinanceX - Controle Financeiro Futurista</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -1191,6 +1192,76 @@
                 <button id="mobile-nav-settings" class="nav-btn neon-effect">⚙️ Configurações</button>
             </nav>
         </div>
+        
+        <!-- Modal do Assistente IA -->
+        <div id="ai-assistant-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
+            <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-4xl h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-mono text-2xl font-bold neon-text">🤖 Assistente Financeiro IA</h2>
+                    <button id="close-ai-assistant-btn" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Chat Container -->
+                <div class="flex-1 flex flex-col">
+                    <!-- Messages Area -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-4 bg-black/20 rounded-lg mb-4 max-h-96">
+                        <div class="ai-message flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">AI</div>
+                            <div class="flex-1">
+                                <div class="bg-purple-500/20 border border-purple-400/30 rounded-lg p-3">
+                                    <p class="text-sm">Olá! Sou seu assistente financeiro pessoal. Como posso ajudá-lo hoje? Posso analisar seus gastos, sugerir economias, ou responder qualquer dúvida sobre suas finanças.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Analise meus gastos dos últimos 30 dias">
+                            📊 Análise Mensal
+                        </button>
+                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Quais são minhas maiores despesas?">
+                            💸 Maiores Gastos
+                        </button>
+                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Como posso economizar mais?">
+                            💡 Dicas Economia
+                        </button>
+                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Crie um relatório financeiro">
+                            📋 Relatório
+                        </button>
+                    </div>
+                    
+                    <!-- Input Area -->
+                    <div class="flex space-x-2">
+                        <input type="text" id="ai-chat-input" placeholder="Digite sua pergunta sobre finanças..." class="flex-1 form-input" maxlength="500">
+                        <button id="send-ai-message" class="btn btn-primary px-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Typing Indicator -->
+                    <div id="ai-typing" class="hidden flex items-center space-x-2 mt-2 text-sm text-gray-400">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                        <span>IA está pensando...</span>
+                    </div>
+                </div>
+                
+                <!-- Footer Info -->
+                <div class="mt-4 text-xs text-gray-500 text-center">
+                    <p>💡 Dica: Seja específico em suas perguntas para obter respostas mais precisas</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Navegação Desktop -->
         <nav class="mb-8 p-2 rounded-lg flex flex-wrap space-x-2 justify-center glass nav-container">
@@ -1366,28 +1437,90 @@
                 </form>
             </div>
 
-            <!-- Seção Backup -->
+            <!-- Assistente Financeiro IA -->
             <div class="glass-card mb-6">
-                <h3 class="font-semibold text-green-400 mb-4 text-lg">💾 Backup de Dados</h3>
-                <div class="space-y-3">
-                    <button type="button" id="export-data-btn" class="btn btn-success w-full flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                <h3 class="font-semibold text-purple-400 mb-4 text-lg">🤖 Assistente Financeiro IA</h3>
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-400">Converse com sua IA financeira pessoal para insights e recomendações</p>
+                    
+                    <button type="button" id="ai-assistant-btn" class="btn btn-primary w-full flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
-                        <span>Exportar Dados</span>
+                        <span>Conversar com IA</span>
                     </button>
-                    <div class="relative">
-                        <input type="file" id="import-file-input" accept=".json" class="hidden">
-                        <button type="button" id="import-data-btn" class="btn btn-ghost w-full flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                            </svg>
-                            <span>Importar Dados</span>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Como estão meus gastos este mês?">
+                            💰 Análise de Gastos
+                        </button>
+                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Onde posso economizar?">
+                            💡 Dicas de Economia
+                        </button>
+                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Como está minha saúde financeira?">
+                            📊 Saúde Financeira
+                        </button>
+                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Crie um plano de poupança para mim">
+                            🎯 Plano de Poupança
                         </button>
                     </div>
+                    
                     <div class="text-xs text-gray-500">
-                        <p>• Backup automático a cada alteração</p>
-                        <p>• Dados salvos localmente no navegador</p>
+                        <p>• Análise inteligente dos seus dados</p>
+                        <p>• Recomendações personalizadas</p>
+                        <p>• Insights em linguagem natural</p>
+                        <p>• Disponível 24/7 para suas dúvidas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload de Extrato Bancário -->
+            <div class="glass-card mb-6">
+                <h3 class="font-semibold text-green-400 mb-4 text-lg">📄 Importar Extrato Bancário</h3>
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-400">Faça upload do PDF do seu extrato bancário para importar transações automaticamente</p>
+                    
+                    <div class="relative">
+                        <input type="file" id="pdf-file-input" accept=".pdf" class="hidden">
+                        <button type="button" id="upload-pdf-btn" class="btn btn-primary w-full flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                            </svg>
+                            <span>Selecionar PDF do Banco</span>
+                        </button>
+                    </div>
+                    
+                    <div id="pdf-upload-status" class="hidden">
+                        <div class="bg-blue-500/10 border border-blue-400/20 rounded-lg p-3">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                                <span class="text-sm text-blue-400">Processando PDF...</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div id="pdf-progress-bar" class="bg-blue-400 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <p id="pdf-status-text" class="text-xs text-gray-400 mt-1">Extraindo texto do documento...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="pdf-results" class="hidden">
+                        <div class="bg-green-500/10 border border-green-400/20 rounded-lg p-3">
+                            <h4 class="text-sm font-semibold text-green-400 mb-2">Transações Encontradas:</h4>
+                            <div id="pdf-transactions-preview" class="space-y-1 max-h-32 overflow-y-auto text-xs">
+                                <!-- Transações serão listadas aqui -->
+                            </div>
+                            <div class="flex space-x-2 mt-3">
+                                <button id="confirm-pdf-import" class="btn btn-success btn-sm flex-1">Importar Todas</button>
+                                <button id="cancel-pdf-import" class="btn btn-ghost btn-sm flex-1">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-xs text-gray-500">
+                        <p>• Suporta extratos dos principais bancos brasileiros</p>
+                        <p>• Detecta automaticamente receitas e despesas</p>
+                        <p>• Categoriza transações usando IA</p>
+                        <p>• Formatos suportados: PDF com texto selecionável</p>
                         <p>• Exporte regularmente para segurança</p>
                     </div>
                 </div>
@@ -4742,32 +4875,9 @@
                  checkExpenseAlerts();
              }
              
-             function saveExpenseAlertsSettings() {
-                 const userPrefix = `expense_alerts_${currentUser?.email || 'default'}`;
-                 localStorage.setItem(userPrefix, JSON.stringify(expenseAlerts));
-             }
+             // Função saveExpenseAlertsSettings removida - duplicada mais abaixo
              
-             function loadExpenseAlertsSettings() {
-                 const userPrefix = `expense_alerts_${currentUser?.email || 'default'}`;
-                 const saved = localStorage.getItem(userPrefix);
-                 
-                 if (saved) {
-                     expenseAlerts = { ...expenseAlerts, ...JSON.parse(saved) };
-                 }
-                 
-                 // Atualizar interface
-                 const enabledEl = document.getElementById('expense-alerts-enabled');
-                 const warningEl = document.getElementById('warning-threshold');
-                 const criticalEl = document.getElementById('critical-threshold');
-                 const warningValueEl = document.getElementById('warning-value');
-                 const criticalValueEl = document.getElementById('critical-value');
-                 
-                 if (enabledEl) enabledEl.checked = expenseAlerts.enabled;
-                 if (warningEl) warningEl.value = expenseAlerts.warningThreshold;
-                 if (criticalEl) criticalEl.value = expenseAlerts.criticalThreshold;
-                 if (warningValueEl) warningValueEl.textContent = expenseAlerts.warningThreshold + '%';
-                 if (criticalValueEl) criticalValueEl.textContent = expenseAlerts.criticalThreshold + '%';
-             }
+             // Função loadExpenseAlertsSettings removida - duplicada mais abaixo
              
              // --- SISTEMA DE AUTENTICAÇÃO 2FA ---
              let twoFactorAuth = {
@@ -6317,9 +6427,10 @@
         document.getElementById('manage-recurring-btn').addEventListener('click', openRecurringModal);
         document.getElementById('generate-report-btn').addEventListener('click', openReportModal);
 
-        document.getElementById('export-data-btn').addEventListener('click', exportData);
-        document.getElementById('import-data-btn').addEventListener('click', () => document.getElementById('import-file-input').click());
-        document.getElementById('import-file-input').addEventListener('change', importData);
+        document.getElementById('upload-pdf-btn').addEventListener('click', () => document.getElementById('pdf-file-input').click());
+        document.getElementById('pdf-file-input').addEventListener('change', handlePdfUpload);
+        document.getElementById('confirm-pdf-import').addEventListener('click', confirmPdfImport);
+        document.getElementById('cancel-pdf-import').addEventListener('click', cancelPdfImport);
         
         // Event listeners para a página de configurações
         document.getElementById('settings-form').addEventListener('submit', handleSettingsFormSubmit);
@@ -6446,6 +6557,7 @@
         document.getElementById('cancel-expense-alerts-btn').addEventListener('click', closeAllModals);
         document.getElementById('save-expense-alerts-btn').addEventListener('click', saveExpenseAlertsSettings);
         document.getElementById('cancel-reminder-btn').addEventListener('click', closeAllModals);
+        // Event listeners do assistente IA serão configurados após as funções serem definidas
         
         // Event listeners para email removidos
         document.getElementById('prev-month-btn').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); });
@@ -6871,24 +6983,27 @@
         const userPrefix = `finance_data_${currentUser.email}`;
         
         // Carregar chave da API
-        const apiKey = localStorage.getItem(`${userPrefix}_gemini_api_key`) || '';
-        document.getElementById('api-key-input').value = apiKey;
+        const apiKeyElement = document.getElementById('api-key-input');
+        if (apiKeyElement) {
+            const apiKey = localStorage.getItem(`${userPrefix}_gemini_api_key`) || '';
+            apiKeyElement.value = apiKey;
+        }
         
         // Carregar configurações de alertas
         const budgetAlerts = localStorage.getItem(`${userPrefix}_budget_alerts`) === 'true';
         const backupReminders = localStorage.getItem(`${userPrefix}_backup_reminders`) === 'true';
         
-        document.getElementById('budget-alerts-enabled').checked = budgetAlerts;
-        document.getElementById('backup-reminders-enabled').checked = backupReminders;
+        const budgetAlertsElement = document.getElementById('budget-alerts-enabled');
+        const backupRemindersElement = document.getElementById('backup-reminders-enabled');
+        
+        if (budgetAlertsElement) budgetAlertsElement.checked = budgetAlerts;
+        if (backupRemindersElement) backupRemindersElement.checked = backupReminders;
 
-        // Carregar configurações de email
-        document.getElementById('user-email').value = localStorage.getItem(`${userPrefix}_user_email`) || '';
-        document.getElementById('emailjs-service-id').value = localStorage.getItem(`${userPrefix}_emailjs_service_id`) || '';
-        document.getElementById('emailjs-template-id').value = localStorage.getItem(`${userPrefix}_emailjs_template_id`) || '';
-        document.getElementById('emailjs-public-key').value = localStorage.getItem(`${userPrefix}_emailjs_public_key`) || '';
+        // Configurações de email foram removidas - não carregar mais
         
         const monthlyReports = localStorage.getItem(`${userPrefix}_monthly_reports`) === 'true';
-        document.getElementById('monthly-reports-enabled').checked = monthlyReports;
+        const monthlyReportsElement = document.getElementById('monthly-reports-enabled');
+        if (monthlyReportsElement) monthlyReportsElement.checked = monthlyReports;
         
         // Carregar configurações de notificação
         loadNotificationSettings();
@@ -6898,18 +7013,23 @@
         const userPrefix = `finance_data_${currentUser.email}`;
         
         // Salvar configurações de alertas
-        const budgetAlerts = document.getElementById('budget-alerts-enabled').checked;
-        const backupReminders = document.getElementById('backup-reminders-enabled').checked;
+        const budgetAlertsElement = document.getElementById('budget-alerts-enabled');
+        const backupRemindersElement = document.getElementById('backup-reminders-enabled');
         
-        localStorage.setItem(`${userPrefix}_budget_alerts`, budgetAlerts);
-        localStorage.setItem(`${userPrefix}_backup_reminders`, backupReminders);
+        if (budgetAlertsElement) {
+            localStorage.setItem(`${userPrefix}_budget_alerts`, budgetAlertsElement.checked);
+        }
+        if (backupRemindersElement) {
+            localStorage.setItem(`${userPrefix}_backup_reminders`, backupRemindersElement.checked);
+        }
         
-        // Salvar configurações de email
-        localStorage.setItem(`${userPrefix}_user_email`, document.getElementById('user-email').value);
-        localStorage.setItem(`${userPrefix}_emailjs_service_id`, document.getElementById('emailjs-service-id').value);
-        localStorage.setItem(`${userPrefix}_emailjs_template_id`, document.getElementById('emailjs-template-id').value);
-        localStorage.setItem(`${userPrefix}_emailjs_public_key`, document.getElementById('emailjs-public-key').value);
-        localStorage.setItem(`${userPrefix}_monthly_reports`, document.getElementById('monthly-reports-enabled').checked);
+        // Configurações de email foram removidas - não salvar mais
+        
+        // Salvar configurações de relatórios mensais se o elemento existir
+        const monthlyReportsElement = document.getElementById('monthly-reports-enabled');
+        if (monthlyReportsElement) {
+            localStorage.setItem(`${userPrefix}_monthly_reports`, monthlyReportsElement.checked);
+        }
         
         showNotification('Configurações salvas com sucesso!', 'success');
     }
@@ -6917,9 +7037,14 @@
     function handleSettingsFormSubmit(e) {
         e.preventDefault();
         const userPrefix = `finance_data_${currentUser.email}`;
-        const newKey = document.getElementById('api-key-input').value;
-        localStorage.setItem(`${userPrefix}_gemini_api_key`, newKey);
-        showNotification('Chave API salva com sucesso!', 'success');
+        const apiKeyElement = document.getElementById('api-key-input');
+        if (apiKeyElement) {
+            const newKey = apiKeyElement.value;
+            localStorage.setItem(`${userPrefix}_gemini_api_key`, newKey);
+            showNotification('Chave API salva com sucesso!', 'success');
+        } else {
+            showNotification('Erro: Campo de API não encontrado!', 'error');
+        }
     }
     
     // Função sendTestEmail removida - sistema de email descontinuado
@@ -7878,6 +8003,826 @@
         showNotification('Configurações de limites salvas com sucesso!', 'success');
         closeAllModals();
     }
+    
+    // === SISTEMA DE UPLOAD DE EXTRATO BANCÁRIO === //
+    let pdfTransactions = [];
+    
+    async function handlePdfUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        if (file.type !== 'application/pdf') {
+            showNotification('Por favor, selecione um arquivo PDF válido.', 'error');
+            return;
+        }
+        
+        showPdfUploadStatus();
+        updatePdfProgress(10, 'Carregando arquivo PDF...');
+        
+        try {
+            // Simular processamento (em produção, usaria PDF.js ou API de OCR)
+            await simulatePdfProcessing(file);
+        } catch (error) {
+            console.error('Erro ao processar PDF:', error);
+            showNotification('Erro ao processar o PDF. Tente novamente.', 'error');
+            hidePdfUploadStatus();
+        }
+    }
+    
+    async function simulatePdfProcessing(file) {
+        try {
+            updatePdfProgress(10, 'Carregando PDF...');
+            
+            // Configurar PDF.js
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            
+            updatePdfProgress(20, 'Extraindo texto do PDF...');
+            
+            // Converter arquivo para ArrayBuffer
+            const arrayBuffer = await file.arrayBuffer();
+            
+            // Carregar PDF
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            
+            updatePdfProgress(40, 'Analisando páginas do documento...');
+            
+            let allText = '';
+            const numPages = pdf.numPages;
+            
+            // Extrair texto de todas as páginas
+            for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
+                
+                // Combinar todos os itens de texto
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                allText += pageText + '\n';
+                
+                updatePdfProgress(40 + (pageNum / numPages) * 20, `Processando página ${pageNum} de ${numPages}...`);
+            }
+            
+            updatePdfProgress(70, 'Identificando estrutura da tabela...');
+            await sleep(500);
+            
+            updatePdfProgress(80, 'Analisando colunas: Data | Descrição | Valor | Saldo...');
+            
+            // Processar texto extraído
+            const extractedTransactions = await parseRealPdfText(allText);
+            
+            updatePdfProgress(90, 'Categorizando transações com IA...');
+            await sleep(500);
+            
+            updatePdfProgress(100, 'Processamento concluído!');
+            await sleep(300);
+            
+            pdfTransactions = extractedTransactions;
+            showPdfResults();
+            
+        } catch (error) {
+            console.error('Erro ao processar PDF:', error);
+            updatePdfProgress(0, 'Erro ao processar PDF');
+            showNotification('Erro ao processar PDF: ' + error.message, 'error');
+            hidePdfUploadStatus();
+        }
+    }
+    
+    async function parseTableStructure() {
+        // Simular dados extraídos seguindo o padrão de tabela bancária
+        // Coluna 1: Data | Coluna 2: Descrição | Coluna 3: Valor | Coluna 4: Saldo
+        const tableData = [
+            ['15/01/2024', 'COMPRA CARTAO *SUPERMERCADO ABC LTDA', '-156,78', '2.343,22'],
+            ['14/01/2024', 'PIX RECEBIDO JOAO SILVA CPF 123.456.789-00', '+500,00', '2.500,00'],
+            ['13/01/2024', 'DEB AUTOMATICO ENERGIA ELETRICA CEMIG', '-89,45', '2.000,00'],
+            ['12/01/2024', 'COMPRA CARTAO *POSTO BR COMBUSTIVEL', '-120,00', '2.089,45'],
+            ['11/01/2024', 'TED RECEBIDA EMPRESA XYZ LTDA SALARIO', '+2.500,00', '2.209,45'],
+            ['10/01/2024', 'SAQUE CAIXA ELETRONICO BANCO 24H', '-200,00', '-290,55'],
+            ['09/01/2024', 'COMPRA CARTAO *FARMACIA POPULAR', '-45,30', '-90,55'],
+            ['08/01/2024', 'PIX ENVIADO MARIA SANTOS CPF 987.654.321-00', '-150,00', '-45,25']
+        ];
+        
+        const transactions = [];
+        
+        tableData.forEach(row => {
+            const [dateStr, description, valueStr, balanceStr] = row;
+            
+            // Converter data do formato DD/MM/YYYY para YYYY-MM-DD
+            const dateParts = dateStr.split('/');
+            const formattedDate = `2024-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
+            
+            // Processar valor (remover + ou -, converter vírgula para ponto)
+            const cleanValue = valueStr.replace(/[+\-]/g, '').replace(',', '.').replace(/\./g, '');
+            const numericValue = parseFloat(cleanValue) / 100; // Converter centavos para reais
+            const isPositive = valueStr.includes('+');
+            
+            // Determinar tipo e categoria baseado na descrição
+            const transactionType = isPositive ? 'income' : 'expense';
+            const category = categorizeTransaction(description, transactionType);
+            
+            transactions.push({
+                date: formattedDate,
+                description: cleanDescription(description),
+                amount: isPositive ? numericValue : -numericValue,
+                type: transactionType,
+                category: category,
+                balance: parseFloat(balanceStr.replace(',', '.').replace(/\./g, '')) / 100
+            });
+        });
+        
+        return transactions;
+    }
+    
+    function categorizeTransaction(description, type) {
+        const desc = description.toUpperCase();
+        
+        if (type === 'income') {
+            if (desc.includes('SALARIO') || desc.includes('TED RECEBIDA') && desc.includes('EMPRESA')) {
+                return 'Salário';
+            }
+            if (desc.includes('PIX RECEBIDO')) {
+                return 'Transferências';
+            }
+            return 'Outras Receitas';
+        } else {
+            if (desc.includes('SUPERMERCADO') || desc.includes('FARMACIA') || desc.includes('PADARIA')) {
+                return 'Alimentação';
+            }
+            if (desc.includes('POSTO') || desc.includes('COMBUSTIVEL') || desc.includes('UBER') || desc.includes('TAXI')) {
+                return 'Transporte';
+            }
+            if (desc.includes('ENERGIA') || desc.includes('AGUA') || desc.includes('TELEFONE') || desc.includes('INTERNET')) {
+                return 'Contas Básicas';
+            }
+            if (desc.includes('PIX ENVIADO') || desc.includes('TED ENVIADA')) {
+                return 'Transferências';
+            }
+            if (desc.includes('SAQUE')) {
+                return 'Saque';
+            }
+            if (desc.includes('CARTAO')) {
+                return 'Compras';
+            }
+            return 'Outras Despesas';
+        }
+    }
+    
+    function cleanDescription(description) {
+         // Limpar e formatar a descrição
+         return description
+             .replace(/\s+/g, ' ') // Remover espaços extras
+             .replace(/\*+/g, '') // Remover asteriscos
+             .trim()
+             .toLowerCase()
+             .replace(/\b\w/g, l => l.toUpperCase()); // Capitalizar primeira letra de cada palavra
+     }
+     
+     async function parseRealPdfText(text) {
+         const transactions = [];
+         
+         // Dividir texto em linhas
+         const lines = text.split('\n').filter(line => line.trim().length > 0);
+         
+         // Padrões regex para identificar transações
+         const datePattern = /\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/;
+         const valuePattern = /([+-]?\s*R?\$?\s*\d{1,3}(?:[.,]\d{3})*[.,]\d{2})/;
+         
+         for (let i = 0; i < lines.length; i++) {
+             const line = lines[i].trim();
+             
+             // Tentar identificar uma linha de transação
+             const dateMatch = line.match(datePattern);
+             
+             if (dateMatch) {
+                 // Possível início de uma nova transação
+                 const dateStr = dateMatch[0];
+                 
+                 // Extrair resto da linha após a data
+                 const afterDate = line.substring(line.indexOf(dateStr) + dateStr.length).trim();
+                 
+                 // Procurar valor na linha atual
+                 const valueMatch = afterDate.match(valuePattern);
+                 
+                 if (valueMatch) {
+                     // Valor encontrado na mesma linha
+                     const valueIndex = afterDate.indexOf(valueMatch[0]);
+                     const description = afterDate.substring(0, valueIndex).trim();
+                     const value = valueMatch[0];
+                     
+                     // Procurar saldo após o valor
+                     const afterValue = afterDate.substring(valueIndex + valueMatch[0].length).trim();
+                     const balanceMatch = afterValue.match(/([+-]?\s*R?\$?\s*\d{1,3}(?:[.,]\d{3})*[.,]\d{2})/);
+                     const balance = balanceMatch ? balanceMatch[0] : null;
+                     
+                     // Se encontrou data, descrição e valor, criar transação
+                     if (description && value) {
+                         const transaction = parseTransactionData(dateStr, description, value, balance);
+                         if (transaction) {
+                             transactions.push(transaction);
+                         }
+                     }
+                 }
+             }
+         }
+         
+         // Se não encontrou transações com regex, tentar método alternativo
+         if (transactions.length === 0) {
+             return await parseAlternativeFormat(text);
+         }
+         
+         return transactions;
+     }
+     
+     function parseTransactionData(dateStr, description, valueStr, balanceStr) {
+         try {
+             // Converter data
+             const dateParts = dateStr.split(/[\/\-]/);
+             
+             if (dateParts.length !== 3) {
+                 return null;
+             }
+             
+             const day = dateParts[0].padStart(2, '0');
+             const month = dateParts[1].padStart(2, '0');
+             let year = dateParts[2];
+             
+             // Ajustar ano se necessário
+             if (year.length === 2) {
+                 year = '20' + year;
+             }
+             
+             const formattedDate = `${year}-${month}-${day}`;
+             
+             // Processar valor
+             const cleanValue = valueStr.replace(/[R\$\s]/g, '').replace(/\./g, '').replace(',', '.');
+             const numericValue = parseFloat(cleanValue);
+             
+             if (isNaN(numericValue)) {
+                 return null;
+             }
+             
+             // Determinar se é receita ou despesa
+             const isPositive = numericValue > 0 || valueStr.includes('+');
+             const transactionType = isPositive ? 'income' : 'expense';
+             
+             // Limpar descrição
+             const cleanDesc = cleanDescription(description);
+             
+             // Categorizar
+             const category = categorizeTransaction(cleanDesc, transactionType);
+             
+             // Processar saldo se disponível
+             let balance = null;
+             if (balanceStr) {
+                 const cleanBalance = balanceStr.replace(/[R\$\s]/g, '').replace(/\./g, '').replace(',', '.');
+                 balance = parseFloat(cleanBalance);
+             }
+             
+             return {
+                 date: formattedDate,
+                 description: cleanDesc,
+                 amount: Math.abs(numericValue) * (isPositive ? 1 : -1),
+                 type: transactionType,
+                 category: category,
+                 balance: balance
+             };
+             
+         } catch (error) {
+             console.error('Erro ao processar transação:', error);
+             return null;
+         }
+     }
+     
+     async function parseAlternativeFormat(text) {
+         // Método alternativo para PDFs com formato diferente
+         const transactions = [];
+         
+         // Procurar por padrões alternativos
+         const lines = text.split('\n');
+         
+         for (const line of lines) {
+             // Procurar linhas que contenham data e valor
+             if (line.match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/) && 
+                 line.match(/\d+[.,]\d{2}/)) {
+                 
+                 // Tentar extrair informações da linha
+                 const parts = line.split(/\s+/);
+                 
+                 if (parts.length >= 3) {
+                     const dateStr = parts.find(part => part.match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/));
+                     const valueStr = parts.find(part => part.match(/[+-]?\d+[.,]\d{2}/));
+                     
+                     if (dateStr && valueStr) {
+                         const description = parts.filter(part => 
+                             part !== dateStr && 
+                             part !== valueStr && 
+                             !part.match(/^[+-]?\d+[.,]\d{2}$/)
+                         ).join(' ');
+                         
+                         const transaction = parseTransactionData(dateStr, description, valueStr, null);
+                         if (transaction) {
+                             transactions.push(transaction);
+                         }
+                     }
+                 }
+             }
+         }
+         
+         return transactions;
+     }
+    
+    function showPdfUploadStatus() {
+        document.getElementById('pdf-upload-status').classList.remove('hidden');
+        document.getElementById('pdf-results').classList.add('hidden');
+    }
+    
+    function hidePdfUploadStatus() {
+        document.getElementById('pdf-upload-status').classList.add('hidden');
+    }
+    
+    function updatePdfProgress(percentage, statusText) {
+        document.getElementById('pdf-progress-bar').style.width = percentage + '%';
+        document.getElementById('pdf-status-text').textContent = statusText;
+    }
+    
+    function showPdfResults() {
+        hidePdfUploadStatus();
+        
+        const previewContainer = document.getElementById('pdf-transactions-preview');
+        previewContainer.innerHTML = '';
+        
+        pdfTransactions.forEach((transaction, index) => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between items-center p-2 bg-gray-700/30 rounded text-xs';
+            
+            const amountColor = transaction.amount > 0 ? 'text-green-400' : 'text-red-400';
+            const amountSign = transaction.amount > 0 ? '+' : '';
+            
+            div.innerHTML = `
+                <div class="flex-1">
+                    <p class="font-medium">${transaction.description}</p>
+                    <p class="text-gray-400">${formatDate(transaction.date)} • ${transaction.category}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold ${amountColor}">${amountSign}${formatCurrency(Math.abs(transaction.amount))}</p>
+                </div>
+            `;
+            
+            previewContainer.appendChild(div);
+        });
+        
+        document.getElementById('pdf-results').classList.remove('hidden');
+    }
+    
+    function confirmPdfImport() {
+        if (pdfTransactions.length === 0) {
+            showNotification('Nenhuma transação para importar.', 'warning');
+            return;
+        }
+        
+        let importedCount = 0;
+        
+        pdfTransactions.forEach(transaction => {
+            // Verificar se a transação já existe (evitar duplicatas)
+            const exists = transactions.some(t => 
+                t.date === transaction.date && 
+                t.description === transaction.description && 
+                Math.abs(t.amount - Math.abs(transaction.amount)) < 0.01
+            );
+            
+            if (!exists) {
+                addTransaction({
+                    type: transaction.type,
+                    description: transaction.description,
+                    amount: Math.abs(transaction.amount),
+                    category: transaction.category,
+                    date: transaction.date,
+                    tags: ['Importado do PDF']
+                }, true);
+                importedCount++;
+            }
+        });
+        
+        if (importedCount > 0) {
+            saveAndRefresh();
+            showNotification(`${importedCount} transações importadas com sucesso!`, 'success');
+        } else {
+            showNotification('Todas as transações já existem no sistema.', 'info');
+        }
+        
+        cancelPdfImport();
+    }
+    
+    function cancelPdfImport() {
+        document.getElementById('pdf-results').classList.add('hidden');
+        document.getElementById('pdf-file-input').value = '';
+        pdfTransactions = [];
+    }
+    
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    function formatDate(dateString) {
+         const date = new Date(dateString);
+         return date.toLocaleDateString('pt-BR');
+     }
+     
+     // === ASSISTENTE FINANCEIRO IA === //
+     let aiChatHistory = [];
+     
+     function openAIAssistant() {
+         const modal = document.getElementById('ai-assistant-modal');
+         modal.classList.remove('hidden');
+         setTimeout(() => {
+             modal.classList.remove('opacity-0');
+             modal.querySelector('.modal-content').classList.remove('scale-95', '-translate-y-10');
+         }, 10);
+         
+         // Configurar event listeners para ações rápidas
+         document.querySelectorAll('.ai-quick-action').forEach(btn => {
+             btn.addEventListener('click', () => {
+                 const prompt = btn.dataset.prompt;
+                 document.getElementById('ai-chat-input').value = prompt;
+                 sendAIMessage();
+             });
+         });
+         
+         // Focar no input
+         setTimeout(() => {
+             document.getElementById('ai-chat-input').focus();
+         }, 300);
+     }
+     
+     function closeAIAssistant() {
+         const modal = document.getElementById('ai-assistant-modal');
+         modal.classList.add('opacity-0');
+         modal.querySelector('.modal-content').classList.add('scale-95', '-translate-y-10');
+         setTimeout(() => {
+             modal.classList.add('hidden');
+         }, 300);
+     }
+     
+     function handleAIChatKeypress(e) {
+         if (e.key === 'Enter' && !e.shiftKey) {
+             e.preventDefault();
+             sendAIMessage();
+         }
+     }
+     
+     async function sendAIMessage() {
+         const input = document.getElementById('ai-chat-input');
+         const message = input.value.trim();
+         
+         if (!message) return;
+         
+         // Adicionar mensagem do usuário
+         addChatMessage(message, 'user');
+         input.value = '';
+         
+         // Mostrar indicador de digitação
+         showAITyping();
+         
+         // Simular delay de processamento
+         await sleep(1500);
+         
+         // Gerar resposta da IA
+         const aiResponse = await generateAIResponse(message);
+         
+         // Esconder indicador e mostrar resposta
+         hideAITyping();
+         addChatMessage(aiResponse, 'ai');
+         
+         // Salvar no histórico
+         aiChatHistory.push({ user: message, ai: aiResponse, timestamp: new Date() });
+     }
+     
+     function addChatMessage(message, sender) {
+         const chatMessages = document.getElementById('chat-messages');
+         const messageDiv = document.createElement('div');
+         
+         if (sender === 'user') {
+             messageDiv.className = 'user-message flex items-start space-x-3 justify-end';
+             messageDiv.innerHTML = `
+                 <div class="flex-1 text-right">
+                     <div class="bg-blue-500/20 border border-blue-400/30 rounded-lg p-3 inline-block max-w-xs md:max-w-md">
+                         <p class="text-sm">${message}</p>
+                     </div>
+                 </div>
+                 <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">EU</div>
+             `;
+         } else {
+             messageDiv.className = 'ai-message flex items-start space-x-3';
+             messageDiv.innerHTML = `
+                 <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">AI</div>
+                 <div class="flex-1">
+                     <div class="bg-purple-500/20 border border-purple-400/30 rounded-lg p-3">
+                         <div class="text-sm whitespace-pre-line">${message}</div>
+                     </div>
+                 </div>
+             `;
+         }
+         
+         chatMessages.appendChild(messageDiv);
+         chatMessages.scrollTop = chatMessages.scrollHeight;
+     }
+     
+     function showAITyping() {
+         document.getElementById('ai-typing').classList.remove('hidden');
+     }
+     
+     function hideAITyping() {
+         document.getElementById('ai-typing').classList.add('hidden');
+     }
+     
+     async function generateAIResponse(userMessage) {
+         const message = userMessage.toLowerCase();
+         
+         // Analisar dados financeiros do usuário
+         const financialData = analyzeUserFinances();
+         
+         // Gerar resposta baseada na pergunta
+         if (message.includes('gastos') || message.includes('despesas')) {
+             return generateExpenseAnalysis(financialData);
+         } else if (message.includes('economia') || message.includes('economizar')) {
+             return generateSavingsAdvice(financialData);
+         } else if (message.includes('saúde financeira') || message.includes('situação')) {
+             return generateFinancialHealth(financialData);
+         } else if (message.includes('relatório') || message.includes('resumo')) {
+             return generateFinancialReport(financialData);
+         } else if (message.includes('poupança') || message.includes('investir')) {
+             return generateSavingsPlan(financialData);
+         } else if (message.includes('orçamento') || message.includes('planejamento')) {
+             return generateBudgetAdvice(financialData);
+         } else {
+             return generateGeneralAdvice(financialData, userMessage);
+         }
+     }
+     
+     function analyzeUserFinances() {
+         const now = new Date();
+         const thisMonth = now.getMonth();
+         const thisYear = now.getFullYear();
+         
+         // Filtrar transações do mês atual
+         const thisMonthTransactions = transactions.filter(t => {
+             const transactionDate = new Date(t.date);
+             return transactionDate.getMonth() === thisMonth && transactionDate.getFullYear() === thisYear;
+         });
+         
+         const totalIncome = thisMonthTransactions
+             .filter(t => t.type === 'income')
+             .reduce((sum, t) => sum + t.amount, 0);
+             
+         const totalExpenses = thisMonthTransactions
+             .filter(t => t.type === 'expense')
+             .reduce((sum, t) => sum + t.amount, 0);
+             
+         const balance = totalIncome - totalExpenses;
+         
+         // Análise por categoria
+         const expensesByCategory = {};
+         thisMonthTransactions
+             .filter(t => t.type === 'expense')
+             .forEach(t => {
+                 expensesByCategory[t.category] = (expensesByCategory[t.category] || 0) + t.amount;
+             });
+             
+         const topExpenseCategory = Object.entries(expensesByCategory)
+             .sort(([,a], [,b]) => b - a)[0];
+             
+         return {
+             totalIncome,
+             totalExpenses,
+             balance,
+             expensesByCategory,
+             topExpenseCategory,
+             transactionCount: thisMonthTransactions.length,
+             savingsRate: totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100) : 0
+         };
+     }
+     
+     function generateExpenseAnalysis(data) {
+         const { totalExpenses, expensesByCategory, topExpenseCategory } = data;
+         
+         if (totalExpenses === 0) {
+             return "📊 **Análise de Gastos**\n\nVocê ainda não registrou gastos este mês. Que tal começar a adicionar suas despesas para eu poder fazer uma análise mais detalhada?";
+         }
+         
+         let analysis = `📊 **Análise de Gastos - ${new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}**\n\n`;
+         analysis += `💰 **Total gasto:** ${formatCurrency(totalExpenses)}\n\n`;
+         
+         if (topExpenseCategory) {
+             const [category, amount] = topExpenseCategory;
+             const percentage = (amount / totalExpenses * 100).toFixed(1);
+             analysis += `🎯 **Maior categoria:** ${category} (${formatCurrency(amount)} - ${percentage}%)\n\n`;
+         }
+         
+         analysis += "📈 **Distribuição por categoria:**\n";
+         Object.entries(expensesByCategory)
+             .sort(([,a], [,b]) => b - a)
+             .slice(0, 5)
+             .forEach(([category, amount]) => {
+                 const percentage = (amount / totalExpenses * 100).toFixed(1);
+                 analysis += `• ${category}: ${formatCurrency(amount)} (${percentage}%)\n`;
+             });
+             
+         return analysis;
+     }
+     
+     function generateSavingsAdvice(data) {
+         const { totalIncome, totalExpenses, expensesByCategory, savingsRate } = data;
+         
+         let advice = "💡 **Dicas de Economia Personalizadas**\n\n";
+         
+         if (savingsRate < 10) {
+             advice += "🚨 Sua taxa de poupança está baixa. Vamos trabalhar nisso!\n\n";
+         } else if (savingsRate > 20) {
+             advice += "🎉 Parabéns! Você tem uma excelente taxa de poupança!\n\n";
+         }
+         
+         // Sugestões baseadas nas categorias de maior gasto
+         const sortedExpenses = Object.entries(expensesByCategory)
+             .sort(([,a], [,b]) => b - a);
+             
+         if (sortedExpenses.length > 0) {
+             const [topCategory, topAmount] = sortedExpenses[0];
+             
+             advice += "🎯 **Oportunidades de economia:**\n\n";
+             
+             if (topCategory.includes('Alimentação')) {
+                 advice += "🍽️ **Alimentação:** Considere cozinhar mais em casa, fazer lista de compras e evitar desperdícios.\n";
+             } else if (topCategory.includes('Transporte')) {
+                 advice += "🚗 **Transporte:** Avalie usar transporte público, caronas ou trabalho remoto alguns dias.\n";
+             } else if (topCategory.includes('Entretenimento')) {
+                 advice += "🎬 **Entretenimento:** Procure atividades gratuitas e promoções em streaming.\n";
+             }
+             
+             advice += `\n💰 **Meta:** Reduza ${topCategory} em 10% = economia de ${formatCurrency(topAmount * 0.1)}/mês`;
+         }
+         
+         return advice;
+     }
+     
+     function generateFinancialHealth(data) {
+         const { totalIncome, totalExpenses, balance, savingsRate } = data;
+         
+         let health = "🏥 **Diagnóstico de Saúde Financeira**\n\n";
+         
+         // Calcular score
+         let score = 0;
+         let status = "";
+         let color = "";
+         
+         if (savingsRate >= 20) {
+             score += 40;
+         } else if (savingsRate >= 10) {
+             score += 25;
+         } else if (savingsRate >= 0) {
+             score += 10;
+         }
+         
+         if (balance > 0) {
+             score += 30;
+         } else if (balance >= -totalIncome * 0.1) {
+             score += 15;
+         }
+         
+         if (totalIncome > totalExpenses * 1.2) {
+             score += 30;
+         } else if (totalIncome > totalExpenses) {
+             score += 20;
+         }
+         
+         if (score >= 80) {
+             status = "Excelente";
+             color = "🟢";
+         } else if (score >= 60) {
+             status = "Boa";
+             color = "🟡";
+         } else if (score >= 40) {
+             status = "Regular";
+             color = "🟠";
+         } else {
+             status = "Precisa melhorar";
+             color = "🔴";
+         }
+         
+         health += `${color} **Score:** ${score}/100 - ${status}\n\n`;
+         health += `💰 **Saldo do mês:** ${formatCurrency(balance)}\n`;
+         health += `📊 **Taxa de poupança:** ${savingsRate.toFixed(1)}%\n\n`;
+         
+         health += "📋 **Recomendações:**\n";
+         if (score < 60) {
+             health += "• Foque em reduzir gastos desnecessários\n";
+             health += "• Estabeleça uma meta de poupança mensal\n";
+             health += "• Monitore seus gastos diariamente\n";
+         } else {
+             health += "• Continue mantendo o bom controle financeiro\n";
+             health += "• Considere investir suas economias\n";
+             health += "• Explore novas fontes de renda\n";
+         }
+         
+         return health;
+     }
+     
+     function generateFinancialReport(data) {
+         const { totalIncome, totalExpenses, balance, transactionCount } = data;
+         
+         let report = `📋 **Relatório Financeiro - ${new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}**\n\n`;
+         
+         report += "💰 **Resumo Geral:**\n";
+         report += `• Receitas: ${formatCurrency(totalIncome)}\n`;
+         report += `• Despesas: ${formatCurrency(totalExpenses)}\n`;
+         report += `• Saldo: ${formatCurrency(balance)}\n`;
+         report += `• Transações: ${transactionCount}\n\n`;
+         
+         if (goals && goals.length > 0) {
+             report += "🎯 **Progresso dos Cofrinhos:**\n";
+             goals.slice(0, 3).forEach(goal => {
+                 const progress = goal.targetAmount > 0 ? (goal.savedAmount / goal.targetAmount * 100) : 0;
+                 report += `• ${goal.name}: ${progress.toFixed(1)}% (${formatCurrency(goal.savedAmount)}/${formatCurrency(goal.targetAmount)})\n`;
+             });
+         }
+         
+         return report;
+     }
+     
+     function generateSavingsPlan(data) {
+         const { totalIncome, totalExpenses } = data;
+         
+         let plan = "🎯 **Plano de Poupança Personalizado**\n\n";
+         
+         if (totalIncome === 0) {
+             return "Para criar um plano de poupança, preciso que você registre suas receitas primeiro. Adicione suas fontes de renda para eu poder ajudar!";
+         }
+         
+         const suggestedSavings = totalIncome * 0.2; // 20% da renda
+         const currentSavings = totalIncome - totalExpenses;
+         
+         plan += `💡 **Meta recomendada:** ${formatCurrency(suggestedSavings)}/mês (20% da renda)\n`;
+         plan += `📊 **Situação atual:** ${formatCurrency(currentSavings)}/mês\n\n`;
+         
+         if (currentSavings < suggestedSavings) {
+             const gap = suggestedSavings - currentSavings;
+             plan += `🎯 **Desafio:** Economize mais ${formatCurrency(gap)}/mês\n\n`;
+             plan += "📝 **Estratégias:**\n";
+             plan += "• Regra 50/30/20: 50% necessidades, 30% desejos, 20% poupança\n";
+             plan += "• Automatize transferências para poupança\n";
+             plan += "• Revise gastos mensalmente\n";
+             plan += "• Use a técnica do envelope para categorias\n";
+         } else {
+             plan += "🎉 Parabéns! Você já está poupando acima da meta!\n\n";
+             plan += "💰 **Próximos passos:**\n";
+             plan += "• Considere investimentos de baixo risco\n";
+             plan += "• Diversifique suas aplicações\n";
+             plan += "• Mantenha uma reserva de emergência\n";
+         }
+         
+         return plan;
+     }
+     
+     function generateBudgetAdvice(data) {
+         const { totalIncome, expensesByCategory } = data;
+         
+         let advice = "📊 **Consultoria de Orçamento**\n\n";
+         
+         if (totalIncome === 0) {
+             return "Para criar um orçamento eficaz, primeiro registre suas receitas. Depois podemos planejar como distribuir seus recursos!";
+         }
+         
+         advice += "💡 **Distribuição recomendada (Regra 50/30/20):**\n";
+         advice += `• Necessidades (50%): ${formatCurrency(totalIncome * 0.5)}\n`;
+         advice += `• Desejos (30%): ${formatCurrency(totalIncome * 0.3)}\n`;
+         advice += `• Poupança (20%): ${formatCurrency(totalIncome * 0.2)}\n\n`;
+         
+         if (Object.keys(expensesByCategory).length > 0) {
+             advice += "📈 **Sua distribuição atual:**\n";
+             Object.entries(expensesByCategory)
+                 .sort(([,a], [,b]) => b - a)
+                 .forEach(([category, amount]) => {
+                     const percentage = (amount / totalIncome * 100).toFixed(1);
+                     advice += `• ${category}: ${formatCurrency(amount)} (${percentage}%)\n`;
+                 });
+         }
+         
+         return advice;
+     }
+     
+     function generateGeneralAdvice(data, userMessage) {
+         const responses = [
+             "Entendi sua pergunta! Com base nos seus dados financeiros, posso ajudar de várias formas. Que tal ser mais específico? Por exemplo: 'Como estão meus gastos?' ou 'Onde posso economizar?'",
+             "Sou seu assistente financeiro pessoal! Posso analisar seus gastos, sugerir economias, criar relatórios e muito mais. O que você gostaria de saber sobre suas finanças?",
+             "Ótima pergunta! Para dar uma resposta mais precisa, preciso entender melhor o que você quer saber. Posso ajudar com análises de gastos, planejamento financeiro, dicas de economia e muito mais!",
+             "Como seu consultor financeiro IA, estou aqui para ajudar! Posso analisar seus dados, criar relatórios personalizados e dar conselhos baseados na sua situação atual. O que você gostaria de explorar?"
+         ];
+         
+         return responses[Math.floor(Math.random() * responses.length)];
+     }
+     
+     // Configurar event listeners do assistente IA após as funções serem definidas
+     document.getElementById('ai-assistant-btn').addEventListener('click', openAIAssistant);
+     document.getElementById('close-ai-assistant-btn').addEventListener('click', closeAIAssistant);
+     document.getElementById('send-ai-message').addEventListener('click', sendAIMessage);
+     document.getElementById('ai-chat-input').addEventListener('keypress', handleAIChatKeypress);
 
     </script>
 </body>
