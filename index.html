@@ -765,7 +765,7 @@
             </form>
         </div>
     </div>
-    <div id="delete-confirm-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
+    <div id="delete-confirm-modal" class="modal-backdrop hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
         <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-md">
             <h2 id="delete-modal-title" class="font-mono text-2xl font-bold mb-4 text-red-400">Confirmar Exclusão</h2>
             <p id="delete-modal-text" class="text-gray-400 mb-6">Tem certeza que deseja excluir?</p>
@@ -1021,7 +1021,14 @@
                 const q = query(collection(db, `users/${user.uid}/${colName}`));
                 const unsub = onSnapshot(q, (snapshot) => {
                     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    window[colName] = data; // Armazena em variáveis globais, ex: window.transactions
+                    
+                    // Atualizar tanto window quanto variáveis globais
+                    window[colName] = data;
+                    if (colName === 'transactions') transactions = data;
+                    if (colName === 'goals') goals = data;
+                    if (colName === 'categories') categories = data;
+                    if (colName === 'budgets') budgets = data;
+                    if (colName === 'recurringTemplates') recurringTemplates = data;
                     
                     if (colName === 'categories' && data.length === 0) {
                          initializeDefaultCategories();
@@ -1243,9 +1250,15 @@
             }
 
             async function addTransaction(transactionData) {
+            if (!currentUser) {
+                showNotification('Usuário não autenticado. Faça login novamente.', 'error');
+                return;
+            }
+            
             try {
                 if (navigator.onLine) {
                     await addDoc(collection(db, `users/${currentUser.uid}/transactions`), transactionData);
+                    showNotification('Transação adicionada com sucesso!', 'success');
                 } else {
                     // Modo offline: armazenar localmente para sincronização posterior
                     storePendingData('transactions', transactionData);
@@ -1302,12 +1315,17 @@
 
             function deleteRecurringTemplate(id) { recurringTemplates = recurringTemplates.filter(t => t.id !== id); saveAndRefresh(); }
             async function addGoal(goalData) {
+                if (!currentUser) {
+                    showNotification('Usuário não autenticado. Faça login novamente.', 'error');
+                    return;
+                }
+                
                 const newGoal = { id: Date.now().toString() + Math.random().toString(36).substr(2, 9), ...goalData };
-                goals.push(newGoal);
                 
                 try {
                     if (navigator.onLine) {
                         await addDoc(collection(db, `users/${currentUser.uid}/goals`), newGoal);
+                        showNotification('Meta adicionada com sucesso!', 'success');
                     } else {
                         storePendingData('goals', newGoal);
                         registerBackgroundSync('background-sync-goals');
@@ -1319,8 +1337,6 @@
                     registerBackgroundSync('background-sync-goals');
                     showNotification('Erro na conexão. Meta salva offline para sincronização posterior.', 'warning');
                 }
-                
-                saveAndRefresh();
             }
             
             async function deleteGoal(id) {
@@ -1343,7 +1359,36 @@
                 
                 saveAndRefresh();
             }
-            function addFundsToGoal(goalId, amount) { const goal = goals.find(g => g.id === goalId); if (goal) { goal.savedAmount += amount; addTransaction({ type: 'expense', description: `Cofrinho: ${goal.name}`, amount: amount, category: 'Cofrinhos', date: new Date().toISOString().split('T')[0] }, true); saveAndRefresh(); } }
+            async function addFundsToGoal(goalId, amount) { 
+                if (!currentUser) {
+                    showNotification('Usuário não autenticado. Faça login novamente.', 'error');
+                    return;
+                }
+                
+                const goal = goals.find(g => g.id === goalId); 
+                if (goal) { 
+                    try {
+                        // Atualizar o valor salvo na meta
+                        const newSavedAmount = goal.savedAmount + amount;
+                        await setDoc(doc(db, `users/${currentUser.uid}/goals`, goalId), 
+                            { savedAmount: newSavedAmount }, { merge: true });
+                        
+                        // Adicionar transação
+                        await addTransaction({ 
+                            type: 'expense', 
+                            description: `Cofrinho: ${goal.name}`, 
+                            amount: amount, 
+                            category: 'Cofrinhos', 
+                            date: new Date().toISOString().split('T')[0] 
+                        });
+                        
+                        showNotification('Dinheiro adicionado ao cofrinho com sucesso!', 'success');
+                    } catch (error) {
+                        console.error('Erro ao adicionar fundos:', error);
+                        showNotification('Erro ao adicionar fundos ao cofrinho.', 'error');
+                    }
+                } 
+            }
 
             
             function checkAndGenerateRecurringTransactions() {
@@ -1372,8 +1417,15 @@
         }
 
             function updateUI() {
-            if (!currentUser || !transactions) return;
-        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (!currentUser) return;
+            
+            // Garantir que os arrays existem, mesmo que vazios
+            if (!transactions) transactions = [];
+            if (!goals) goals = [];
+            if (!categories) categories = [];
+            if (!budgets) budgets = [];
+            
+            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             updateSummary();
             applyFilters(); // Isso também renderiza a lista de transações
             updateCharts();
@@ -1939,7 +1991,9 @@
         if (type === 'transaction') modalText.textContent = `Tem certeza que deseja excluir esta transação?`;
         else if (type === 'goal') modalText.textContent = `Tem certeza que deseja excluir este cofrinho?`;
         else if (type === 'category') modalText.textContent = `Tem certeza? Todas as transações nesta categoria serão movidas para "Outros".`;
-        openModal(modals.delete);
+        
+        // Abrir modal de exclusão sem fechar outros modais
+        modals.delete.classList.remove('hidden', 'opacity-0');
     }
     function handleDeleteConfirm(e) {
         const { id, type } = e.target.dataset;
@@ -1947,6 +2001,7 @@
         if (type === 'category') {
             deleteCategory(id);   
             renderCategoryList();   
+            // Fechar apenas o modal de exclusão, manter o de categorias aberto
             modals.delete.classList.add('hidden', 'opacity-0');
         } else {
             if (type === 'goal') {
@@ -1955,8 +2010,8 @@
                 deleteTransaction(id);
             }
             closeAllModals();
+        }
     }
-}
     function openRecurringModal() { const listEl = document.getElementById('recurring-list'); listEl.innerHTML = ''; if (recurringTemplates.length === 0) { listEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma despesa recorrente encontrada.</p>'; } else { recurringTemplates.forEach(template => { const item = document.createElement('div'); item.className = 'flex justify-between items-center p-2 bg-gray-50 dark:bg-slate-700/50 rounded'; item.innerHTML = `<div><p class="font-semibold">${template.description}</p><p class="text-sm text-gray-600 dark:text-gray-400">${formatCurrency(template.amount)} / mês - Cat: ${template.category}</p></div><button data-id="${template.id}" class="delete-recurring-btn p-2 text-red-500 hover:text-red-700">&times;</button>`; item.querySelector('.delete-recurring-btn').addEventListener('click', () => { deleteRecurringTemplate(template.id); openRecurringModal(); }); listEl.appendChild(item); }); } openModal(modals.recurring); }
     function openGoalModal() { document.getElementById('goal-form').reset(); document.getElementById('action-plan-display').classList.add('hidden'); temporaryActionPlan = null; openModal(modals.goal); }
     function openAddFundsModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal) { document.getElementById('add-funds-form').reset(); document.getElementById('add-funds-goal-id').value = goalId; document.getElementById('add-funds-modal-title').textContent = `Adicionar a: ${goal.name}`; openModal(modals.addFunds); } }
