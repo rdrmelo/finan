@@ -311,6 +311,82 @@ self.addEventListener('message', event => {
             self.registration.sync.register('background-sync-budgets');
         }
     }
+    
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+    
+    if (event.data && event.data.type === 'CACHE_URLS') {
+        event.waitUntil(cacheUrls(event.data.payload));
+    }
+});
+
+// --- PUSH NOTIFICATIONS ---
+self.addEventListener('push', event => {
+    const options = {
+        body: 'Você tem uma nova notificação do FinanceX',
+        icon: '/icon-192x192.png',
+        badge: '/badge-72x72.png',
+        vibrate: [100, 50, 100],
+        data: {
+            dateOfArrival: Date.now(),
+            primaryKey: 1
+        },
+        actions: [
+            {
+                action: 'explore',
+                title: 'Ver Detalhes',
+                icon: '/icon-explore.png'
+            },
+            {
+                action: 'close',
+                title: 'Fechar',
+                icon: '/icon-close.png'
+            }
+        ]
+    };
+
+    if (event.data) {
+        const data = event.data.json();
+        options.title = data.title || 'FinanceX';
+        options.body = data.body || options.body;
+        options.icon = data.icon || options.icon;
+        options.data = { ...options.data, ...data.data };
+    } else {
+        options.title = 'FinanceX';
+    }
+
+    event.waitUntil(
+        self.registration.showNotification(options.title, options)
+    );
+});
+
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+
+    if (event.action === 'explore') {
+        // Abrir a aplicação
+        event.waitUntil(
+            clients.openWindow('/')
+        );
+    } else if (event.action === 'close') {
+        // Apenas fechar a notificação
+        return;
+    } else {
+        // Clique na notificação principal
+        event.waitUntil(
+            clients.matchAll().then(clientList => {
+                if (clientList.length > 0) {
+                    return clientList[0].focus();
+                }
+                return clients.openWindow('/');
+            })
+        );
+    }
+});
+
+self.addEventListener('notificationclose', event => {
+    console.log('Notificação fechada:', event.notification.tag);
 });
 
 // Limpeza periódica de cache e otimização de dados
