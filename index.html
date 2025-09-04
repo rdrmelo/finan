@@ -1208,7 +1208,7 @@
                 <!-- Chat Container -->
                 <div class="flex-1 flex flex-col">
                     <!-- Messages Area -->
-                    <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-4 bg-black/20 rounded-lg mb-4 max-h-96">
+                     <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-4 bg-black/20 rounded-lg mb-4 min-h-[300px] max-h-[400px]">
                         <div class="ai-message flex items-start space-x-3">
                             <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">AI</div>
                             <div class="flex-1">
@@ -3119,7 +3119,18 @@
             }
 
             // --- LÓGICA DA UI ---
-        function formatCurrency(value) { return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+        function formatCurrency(value, decimals = 2) { 
+            return (value || 0).toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL',
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }); 
+        }
+        
+        function formatCurrencyForCharts(value) {
+            return formatCurrency(value, 2);
+        }
             
             function getCurrentFinancialCycle() {
             const now = new Date();
@@ -3155,6 +3166,8 @@
             updateNetWorthCard();
             renderCalendar();
             updatePredictions(); // Nova função de previsões
+            updateExecutiveDashboard(); // Atualizar score financeiro
+            updateComparisonCharts('monthly'); // Atualizar projeções
         }
         
         // --- ANÁLISE E PREVISÕES INTELIGENTES ---
@@ -3608,7 +3621,7 @@
                          y: {
                              ticks: {
                                  color: '#a0a0a0',
-                                 callback: function(value) { return formatCurrency(value); }
+                                 callback: function(value) { return formatCurrencyForCharts(value); }
                              },
                              grid: { color: 'rgba(0, 212, 255, 0.1)' }
                          },
@@ -6291,7 +6304,7 @@
                 balanceHistory.push(parseFloat(cumulativeBalance.toFixed(2)));
             }
 
-            balanceHistoryChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Saldo', data: balanceHistory, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#00d4ff', pointRadius: 4, pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: ticksColor, callback: value => formatCurrency(value) }, grid: { color: gridColor } }, x: { ticks: { color: ticksColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => 'Saldo: ' + formatCurrency(context.parsed.y) } } } } });   
+            balanceHistoryChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Saldo', data: balanceHistory, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.2)', fill: true, tension: 0.4, pointBackgroundColor: '#00d4ff', pointRadius: 4, pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: ticksColor, callback: value => formatCurrencyForCharts(value) }, grid: { color: gridColor } }, x: { ticks: { color: ticksColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => 'Saldo: ' + formatCurrencyForCharts(context.parsed.y) } } } } });   
         }
          
         function updateGoalsChart() { 
@@ -8437,10 +8450,15 @@
              modal.querySelector('.modal-content').classList.remove('scale-95', '-translate-y-10');
          }, 10);
          
-         // Configurar event listeners para ações rápidas
+         // Remover event listeners antigos e configurar novos para ações rápidas
          document.querySelectorAll('.ai-quick-action').forEach(btn => {
-             btn.addEventListener('click', () => {
-                 const prompt = btn.dataset.prompt;
+             // Clonar o botão para remover todos os event listeners
+             const newBtn = btn.cloneNode(true);
+             btn.parentNode.replaceChild(newBtn, btn);
+             
+             // Adicionar novo event listener
+             newBtn.addEventListener('click', () => {
+                 const prompt = newBtn.dataset.prompt;
                  document.getElementById('ai-chat-input').value = prompt;
                  sendAIMessage();
              });
