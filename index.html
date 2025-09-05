@@ -23,7 +23,6 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <!-- EmailJS removido - sistema de relatórios por email descontinuado -->
@@ -1253,18 +1252,7 @@
                             <div id="confirm-password-error" class="text-red-400 text-xs mt-1 hidden"></div>
                         </div>
 
-                        <!-- reCAPTCHA Real -->
-                        <div class="form-group">
-                            <div class="flex justify-center">
-                                <div class="g-recaptcha" 
-                                     data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-                                     data-callback="onRecaptchaCallback"
-                                     data-expired-callback="onRecaptchaExpired"></div>
-                            </div>
-                            <div class="text-xs text-gray-400 text-center mt-2">
-                                📧 Verificação será enviada por email
-                            </div>
-                        </div>
+
 
                         <div id="register-error" class="text-red-400 text-sm text-center hidden"></div>
                         <div id="register-success" class="text-green-400 text-sm text-center hidden"></div>
@@ -1325,76 +1313,6 @@
                 <button id="mobile-nav-goals" class="nav-btn neon-effect">🎯 Cofrinhos</button>
                 <button id="mobile-nav-settings" class="nav-btn neon-effect">⚙️ Configurações</button>
             </nav>
-        </div>
-        
-        <!-- Modal do Assistente IA -->
-        <div id="ai-assistant-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
-            <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-4xl h-[80vh] flex flex-col">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-mono text-2xl font-bold neon-text">🤖 Assistente Financeiro IA</h2>
-                    <button id="close-ai-assistant-btn" class="text-gray-400 hover:text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                
-                <!-- Chat Container -->
-                <div class="flex-1 flex flex-col">
-                    <!-- Messages Area -->
-                     <div id="chat-messages" class="overflow-y-auto space-y-4 p-4 bg-black/20 rounded-lg mb-4 h-[400px]">
-                        <div class="ai-message flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">AI</div>
-                            <div class="flex-1">
-                                <div class="bg-purple-500/20 border border-purple-400/30 rounded-lg p-3">
-                                    <p class="text-sm">Olá! Sou seu assistente financeiro pessoal. Como posso ajudá-lo hoje? Posso analisar seus gastos, sugerir economias, ou responder qualquer dúvida sobre suas finanças.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Actions -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Analise meus gastos dos últimos 30 dias">
-                            📊 Análise Mensal
-                        </button>
-                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Quais são minhas maiores despesas?">
-                            💸 Maiores Gastos
-                        </button>
-                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Como posso economizar mais?">
-                            💡 Dicas Economia
-                        </button>
-                        <button class="ai-quick-action btn btn-ghost btn-sm" data-prompt="Crie um relatório financeiro">
-                            📋 Relatório
-                        </button>
-                    </div>
-                    
-                    <!-- Input Area -->
-                    <div class="flex space-x-2">
-                        <input type="text" id="ai-chat-input" placeholder="Digite sua pergunta sobre finanças..." class="flex-1 form-input" maxlength="500">
-                        <button id="send-ai-message" class="btn btn-primary px-4">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <!-- Typing Indicator -->
-                    <div id="ai-typing" class="hidden flex items-center space-x-2 mt-2 text-sm text-gray-400">
-                        <div class="flex space-x-1">
-                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
-                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                        </div>
-                        <span>IA está pensando...</span>
-                    </div>
-                </div>
-                
-                <!-- Footer Info -->
-                <div class="mt-4 text-xs text-gray-500 text-center">
-                    <p>💡 Dica: Seja específico em suas perguntas para obter respostas mais precisas</p>
-                </div>
-            </div>
         </div>
 
         <!-- Navegação Desktop -->
@@ -1464,6 +1382,7 @@
                         <h3 class="font-mono font-semibold mb-4 neon-text">Despesas Futuras</h3>
                         <div class="h-80"><canvas id="futureExpensesChart"></canvas></div>
                     </div>
+
                 </div>
                 <div class="glass-card">
                     <h3 class="font-mono font-semibold mb-4 neon-text">Histórico de Saldo</h3>
@@ -1553,42 +1472,7 @@
                 </form>
             </div>
 
-            <!-- Assistente Financeiro IA -->
-            <div class="glass-card mb-6">
-                <h3 class="font-semibold text-purple-400 mb-4 text-lg">🤖 Assistente Financeiro IA</h3>
-                <div class="space-y-4">
-                    <p class="text-sm text-gray-400">Converse com sua IA financeira pessoal para insights e recomendações</p>
-                    
-                    <button type="button" id="ai-assistant-btn" class="btn btn-primary w-full flex items-center justify-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                        </svg>
-                        <span>Conversar com IA</span>
-                    </button>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Como estão meus gastos este mês?">
-                            💰 Análise de Gastos
-                        </button>
-                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Onde posso economizar?">
-                            💡 Dicas de Economia
-                        </button>
-                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Como está minha saúde financeira?">
-                            📊 Saúde Financeira
-                        </button>
-                        <button class="ai-quick-btn btn btn-ghost btn-sm text-left" data-prompt="Crie um plano de poupança para mim">
-                            🎯 Plano de Poupança
-                        </button>
-                    </div>
-                    
-                    <div class="text-xs text-gray-500">
-                        <p>• Análise inteligente dos seus dados</p>
-                        <p>• Recomendações personalizadas</p>
-                        <p>• Insights em linguagem natural</p>
-                        <p>• Disponível 24/7 para suas dúvidas</p>
-                    </div>
-                </div>
-            </div>
+
             
             <!-- Upload de Extrato Bancário -->
             <div class="glass-card mb-6">
@@ -1792,64 +1676,60 @@
 
 
 
-            <!-- Seção Redefinir Senha -->
+            <!-- Seção Informações do Usuário -->
             <div class="glass-card mb-6">
-                <h3 class="font-semibold text-red-400 mb-4 text-lg">🔐 Redefinir Senha</h3>
+                <h3 class="font-semibold text-blue-400 mb-4 text-lg">👤 Informações do Usuário</h3>
                 <div class="space-y-4">
-                    <div class="p-4 bg-yellow-500/10 rounded-lg border border-yellow-400/20">
-                        <h4 class="font-semibold text-yellow-300 mb-2">⚠️ Alterar Senha da Conta</h4>
-                        <p class="text-sm text-gray-400 mb-3">Para sua segurança, redefina sua senha regularmente:</p>
-                        
-                        <div class="space-y-3">
-                            <div>
-                                <label for="current-password" class="block text-xs text-gray-400 mb-1">Senha Atual</label>
-                                <input type="password" id="current-password" class="form-input w-full" placeholder="Digite sua senha atual">
-                            </div>
-                            <div>
-                                <label for="new-password" class="block text-xs text-gray-400 mb-1">Nova Senha</label>
-                                <input type="password" id="new-password" class="form-input w-full" placeholder="Digite a nova senha">
-                            </div>
-                            <div>
-                                <label for="confirm-password" class="block text-xs text-gray-400 mb-1">Confirmar Nova Senha</label>
-                                <input type="password" id="confirm-password" class="form-input w-full" placeholder="Confirme a nova senha">
-                            </div>
-                        </div>
-                        
-                        <div class="flex space-x-2 mt-4">
-                            <button id="reset-password-btn" class="btn btn-danger">
-                                🔄 Redefinir Senha
-                            </button>
-                            <button id="generate-password-btn" class="btn btn-secondary">
-                                🎲 Gerar Senha Segura
-                            </button>
-                        </div>
-                    </div>
-                    
                     <div class="p-4 bg-blue-500/10 rounded-lg border border-blue-400/20">
-                        <h4 class="font-semibold text-blue-300 mb-2">💡 Dicas de Segurança</h4>
-                        <ul class="text-sm text-gray-400 space-y-1 list-disc list-inside">
-                            <li>Use pelo menos 8 caracteres</li>
-                            <li>Combine letras maiúsculas e minúsculas</li>
-                            <li>Inclua números e símbolos especiais</li>
-                            <li>Evite informações pessoais óbvias</li>
-                            <li>Não reutilize senhas de outras contas</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="p-4 bg-green-500/10 rounded-lg border border-green-400/20">
-                        <h4 class="font-semibold text-green-300 mb-2">🛡️ Força da Senha</h4>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400">Força:</span>
-                                <span id="password-strength-text" class="text-gray-400">--</span>
+                        <h4 class="font-semibold text-blue-300 mb-3">📋 Dados Pessoais</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Nome Completo -->
+                            <div class="form-group">
+                                <label class="form-label">Nome Completo</label>
+                                <div class="relative">
+                                    <input type="text" id="user-fullname" class="form-input pr-10" placeholder="Seu nome completo">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <span id="user-fullname-status" class="text-gray-400"></span>
+                                    </div>
+                                </div>
+                                <div id="user-fullname-error" class="text-red-400 text-xs mt-1 hidden"></div>
                             </div>
-                            <div class="w-full bg-gray-700 rounded-full h-2">
-                                <div id="password-strength-bar" class="bg-gray-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+
+                            <!-- Renda Mensal -->
+                            <div class="form-group">
+                                <label class="form-label">Renda Mensal (R$)</label>
+                                <div class="relative">
+                                    <input type="number" id="user-income" class="form-input pr-10" placeholder="0,00" step="0.01">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <span id="user-income-status" class="text-gray-400"></span>
+                                    </div>
+                                </div>
+                                <div id="user-income-error" class="text-red-400 text-xs mt-1 hidden"></div>
                             </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="flex space-x-3 mt-6">
+                            <button id="save-user-info-btn" class="btn btn-primary">
+                                <span id="save-user-info-text">💾 Salvar Informações</span>
+                                <span id="save-user-info-loading" class="hidden">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Salvando...
+                                </span>
+                            </button>
+                            <button id="change-password-btn" class="btn btn-secondary">
+                                🔐 Alterar Senha
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+
 
             <!-- Seção Sobre -->
             <div class="glass-card">
@@ -2242,6 +2122,30 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Reset Mensal Automático -->
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-400 mb-4">📅 Reset Mensal Automático</h4>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-green-500/10 rounded-lg border border-green-400/20">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-sm font-medium text-green-300">Reset Automático Ativo</span>
+                                        <span class="text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded">✓ Ativo</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mb-3">Remove apenas transações pontuais do mês atual. Preserva: recorrentes, parcelas e saldos dos cofrinhos</p>
+                                    <button id="test-monthly-reset" class="btn btn-secondary btn-sm w-full">
+                                        🧪 Testar Reset Agora
+                                    </button>
+                                </div>
+                                
+                                <div class="p-3 bg-blue-500/10 rounded-lg border border-blue-400/20">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-blue-300">Último Reset</span>
+                                        <span id="last-reset-date" class="text-xs text-gray-400">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Histórico de Alertas -->
@@ -2541,6 +2445,83 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal Alterar Senha -->
+    <div id="change-password-modal" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 opacity-0">
+        <div class="modal-content transform scale-95 -translate-y-10 glass p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-mono text-2xl font-bold neon-text">🔐 Alterar Senha</h2>
+                <button id="close-change-password-btn" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="change-password-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="current-password" class="form-label">Senha Atual</label>
+                    <input type="password" id="current-password" class="form-input w-full" placeholder="Digite sua senha atual" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-password" class="form-label">Nova Senha</label>
+                    <div class="relative">
+                        <input type="password" id="new-password" class="form-input w-full pr-10" placeholder="Digite a nova senha" required>
+                        <button type="button" id="toggle-new-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Indicador de Força da Senha -->
+                    <div class="mt-2">
+                        <div class="flex space-x-1 mb-1">
+                            <div id="strength-bar-1" class="h-1 flex-1 bg-gray-600 rounded"></div>
+                            <div id="strength-bar-2" class="h-1 flex-1 bg-gray-600 rounded"></div>
+                            <div id="strength-bar-3" class="h-1 flex-1 bg-gray-600 rounded"></div>
+                            <div id="strength-bar-4" class="h-1 flex-1 bg-gray-600 rounded"></div>
+                        </div>
+                        <div id="password-strength-text" class="text-xs text-gray-400">Digite uma senha</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-new-password" class="form-label">Confirmar Nova Senha</label>
+                    <input type="password" id="confirm-new-password" class="form-input w-full" placeholder="Confirme a nova senha" required>
+                </div>
+                
+                <div class="p-3 bg-blue-500/10 rounded-lg border border-blue-400/20">
+                    <h4 class="font-semibold text-blue-300 mb-2 text-sm">💡 Dicas de Segurança</h4>
+                    <ul class="text-xs text-gray-400 space-y-1">
+                        <li>• Use pelo menos 8 caracteres</li>
+                        <li>• Combine letras maiúsculas e minúsculas</li>
+                        <li>• Inclua números e símbolos especiais</li>
+                        <li>• Evite informações pessoais óbvias</li>
+                    </ul>
+                </div>
+                
+                <div id="change-password-error" class="text-red-400 text-sm text-center hidden"></div>
+                <div id="change-password-success" class="text-green-400 text-sm text-center hidden"></div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="cancel-change-password-btn" class="btn btn-secondary flex-1">Cancelar</button>
+                    <button type="submit" id="submit-change-password-btn" class="btn btn-primary flex-1">
+                        <span id="change-password-text">🔄 Alterar Senha</span>
+                        <span id="change-password-loading" class="hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Alterando...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <script type="module">
         // Firebase imports and configuration
@@ -2559,6 +2540,7 @@
             doc,
             addDoc,
             setDoc,
+            getDoc,
             deleteDoc,
             onSnapshot,
             query,
@@ -2827,19 +2809,7 @@
                 }
             }
             
-            // Validação do reCAPTCHA
-            function validateRecaptcha() {
-                try {
-                    if (typeof grecaptcha === 'undefined' || !grecaptcha.getResponse) {
-                        return false;
-                    }
-                    const response = grecaptcha.getResponse();
-                    return response && response.length > 0;
-                } catch (error) {
-                    console.warn('reCAPTCHA ainda não está pronto:', error);
-                    return false;
-                }
-            }
+
             
             // Verificar se o formulário está válido
             function checkFormValidity() {
@@ -2852,9 +2822,8 @@
                 const isEmailValid = validateEmail(email).valid;
                 const isPasswordValid = validatePassword(password).score >= 4;
                 const isConfirmPasswordValid = password === confirmPassword && confirmPassword.length > 0;
-                const isRecaptchaValid = validateRecaptcha();
                 
-                const isFormValid = isFullNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isRecaptchaValid;
+                const isFormValid = isFullNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;
                 
                 const submitBtn = document.getElementById('register-submit-btn');
                 submitBtn.disabled = !isFormValid;
@@ -2895,18 +2864,9 @@
                 passwordInput.setAttribute('type', type);
             });
             
-            // Callback do reCAPTCHA
-            window.onRecaptchaCallback = function() {
-                checkFormValidity();
-            };
-            
-            window.onRecaptchaExpired = function() {
-                checkFormValidity();
-            };
-            
-            // Aguardar carregamento do reCAPTCHA
+            // Verificação inicial do formulário
             window.addEventListener('load', function() {
-                setTimeout(checkFormValidity, 2000);
+                setTimeout(checkFormValidity, 1000);
             });
 
             registerForm.addEventListener('submit', async (e) => {
@@ -2936,11 +2896,6 @@
                         throw new Error('Por favor, preencha todos os campos corretamente.');
                     }
                     
-                    // Validar reCAPTCHA
-                    if (!validateRecaptcha()) {
-                        throw new Error('Por favor, complete o reCAPTCHA.');
-                    }
-                    
                     // Criar conta no Firebase
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
@@ -2966,11 +2921,6 @@
                         console.error('Erro ao enviar email de verificação:', emailError);
                         successEl.textContent = `Conta criada! Faça login para reenviar o email de verificação.`;
                         successEl.classList.remove('hidden');
-                    }
-                    
-                    // Resetar reCAPTCHA
-                    if (typeof grecaptcha !== 'undefined') {
-                        grecaptcha.reset();
                     }
                     
                     // Resetar formulário após sucesso
@@ -3014,7 +2964,20 @@
 
             async function initializeAppLogic(user) {
             try {
+                // Carregar nome completo do usuário
+            const docRef = doc(db, 'users', user.uid);
+            getDoc(docRef).then(docSnap => {
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    const fullName = userData.fullName || user.email.split('@')[0];
+                    document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${fullName}!`;
+                } else {
+                    document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${user.email.split('@')[0]}!`;
+                }
+            }).catch(error => {
+                console.error('Erro ao carregar nome:', error);
                 document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${user.email.split('@')[0]}!`;
+            });
                 
                 // Sistema de email removido
                 
@@ -3039,6 +3002,12 @@
             
             // Inicializar Sistema de Redefinir Senha
             initializePasswordReset();
+            
+            // Inicializar Sistema de Informações do Usuário
+            initializeUserInfo();
+            
+            // Inicializar Modal de Alterar Senha
+            initializeChangePasswordModal();
             
             // Inicializar Navegação Mobile
             initializeMobileNavigation();
@@ -3111,6 +3080,10 @@
             // --- LÓGICA DE DADOS ---
             function loadData() {
                 setupUserKeys();
+                
+                // Verificar se é necessário resetar dados mensais
+                checkAndResetMonthlyData();
+                
                 transactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY)) || [];
                 recurringTemplates = JSON.parse(localStorage.getItem(RECURRING_KEY)) || [];
                 goals = JSON.parse(localStorage.getItem(GOALS_KEY)) || [];
@@ -3120,6 +3093,121 @@
                     initializeDefaultCategories();
                 }
             }
+            
+            // Função para verificar e resetar dados mensais no dia 1
+            function checkAndResetMonthlyData() {
+                if (!currentUser) return;
+                
+                const today = new Date();
+                const currentMonth = today.toISOString().slice(0, 7); // YYYY-MM
+                const lastResetKey = `${currentUser.email}_last_monthly_reset`;
+                const lastReset = localStorage.getItem(lastResetKey);
+                
+                // Verificar se é dia 1 do mês e se ainda não foi resetado este mês
+                if (today.getDate() === 1 && lastReset !== currentMonth) {
+                    resetMonthlyData(currentMonth);
+                    localStorage.setItem(lastResetKey, currentMonth);
+                    
+                    // Mostrar notificação de reset
+                    setTimeout(() => {
+                        showNotification('📅 Transações pontuais do mês resetadas! Recorrentes, parcelas e cofrinhos preservados.', 'info');
+                    }, 1000);
+                }
+            }
+            
+            // Função para resetar apenas transações pontuais do mês atual (preserva recorrentes, parcelas e cofrinhos)
+            function resetMonthlyData(currentMonth) {
+                if (!currentUser) return;
+                
+                setupUserKeys();
+                const existingTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY)) || [];
+                
+                // Filtrar transações para manter:
+                // 1. Todas as transações de meses anteriores
+                // 2. Transações recorrentes do mês atual (que têm recurringTemplateId)
+                // 3. Transações de parcelas do mês atual (que têm installmentInfo)
+                // 4. Transações relacionadas a metas/cofrinhos (que têm goalId)
+                const filteredTransactions = existingTransactions.filter(transaction => {
+                    // Manter transações de meses anteriores
+                    if (!transaction.date.startsWith(currentMonth)) {
+                        return true;
+                    }
+                    
+                    // Para transações do mês atual, manter apenas:
+                    // - Transações recorrentes
+                    if (transaction.recurringTemplateId) {
+                        return true;
+                    }
+                    
+                    // - Transações de parcelas
+                    if (transaction.installmentInfo) {
+                        return true;
+                    }
+                    
+                    // - Transações relacionadas a metas/cofrinhos
+                    if (transaction.goalId) {
+                        return true;
+                    }
+                    
+                    // Remover apenas transações pontuais do mês atual
+                    return false;
+                });
+                
+                // Salvar transações filtradas
+                localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(filteredTransactions));
+                
+                // Atualizar array global de transações
+                transactions = filteredTransactions;
+                
+                // Atualizar a interface imediatamente
+                updateUI();
+                
+                const removedCount = existingTransactions.length - filteredTransactions.length;
+                console.log(`Reset mensal executado: ${removedCount} transações pontuais removidas, ${filteredTransactions.length} transações mantidas (incluindo recorrentes, parcelas e cofrinhos)`);
+            }
+            
+            // Função para testar o reset mensal manualmente
+            function testMonthlyReset() {
+                if (!currentUser) {
+                    showNotification('❌ Usuário não autenticado', 'error');
+                    return;
+                }
+                
+                if (confirm('⚠️ Isso irá remover apenas transações pontuais do mês atual.\n\n✅ Serão preservados:\n• Transações recorrentes\n• Parcelas\n• Saldos dos cofrinhos\n• Histórico de meses anteriores\n\nDeseja continuar?')) {
+                    const currentMonth = new Date().toISOString().slice(0, 7);
+                    resetMonthlyData(currentMonth);
+                    
+                    // Atualizar data do último reset
+                    const lastResetKey = `${currentUser.email}_last_monthly_reset`;
+                    localStorage.setItem(lastResetKey, currentMonth);
+                    updateLastResetDisplay();
+                    
+                    showNotification('✅ Reset executado! Apenas transações pontuais removidas.', 'success');
+                }
+            }
+            
+            // Função para atualizar a exibição da data do último reset
+            function updateLastResetDisplay() {
+                if (!currentUser) return;
+                
+                const lastResetKey = `${currentUser.email}_last_monthly_reset`;
+                const lastReset = localStorage.getItem(lastResetKey);
+                const lastResetElement = document.getElementById('last-reset-date');
+                
+                if (lastResetElement) {
+                    if (lastReset) {
+                        const date = new Date(lastReset + '-01');
+                        const formattedDate = date.toLocaleDateString('pt-BR', { 
+                            month: 'long', 
+                            year: 'numeric' 
+                        });
+                        lastResetElement.textContent = formattedDate;
+                    } else {
+                        lastResetElement.textContent = 'Nunca';
+                    }
+                }
+            }
+            
             function saveData() {
                 if (!currentUser) return;
                 localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
@@ -3443,7 +3531,11 @@
         }
         
         function formatCurrencyForCharts(value) {
-            return formatCurrency(value, 2);
+            return formatCurrency(value, 1);
+        }
+        
+        function formatCurrencyForDatalabels(value) {
+            return formatCurrency(value, 1);
         }
             
             function getCurrentFinancialCycle() {
@@ -3921,6 +4013,9 @@
                      responsive: true,
                      maintainAspectRatio: false,
                      plugins: {
+                         datalabels: {
+                             display: false
+                         },
                          legend: { display: false }
                      },
                      scales: {
@@ -5934,6 +6029,248 @@
                   }
               }
               
+              // --- SISTEMA DE INFORMAÇÕES DO USUÁRIO ---
+              
+              function validateUserFullName(name) {
+                  if (!name) return { valid: false, message: 'Nome é obrigatório' };
+                  if (name.length < 2) return { valid: false, message: 'Nome muito curto' };
+                  if (name.length > 100) return { valid: false, message: 'Nome muito longo' };
+                  if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) return { valid: false, message: 'Apenas letras e espaços' };
+                  return { valid: true, message: 'Nome válido' };
+              }
+              
+              function validateUserIncome(income) {
+                  if (!income || income === '') return { valid: true, message: '' }; // Renda é opcional
+                  const numIncome = parseFloat(income);
+                  if (isNaN(numIncome) || numIncome < 0) return { valid: false, message: 'Valor inválido' };
+                  if (numIncome > 1000000) return { valid: false, message: 'Valor muito alto' };
+                  return { valid: true, message: 'Renda válida' };
+              }
+              
+              function updateUserFieldValidation(fieldId, validationFn, value) {
+                  const validation = validationFn(value);
+                  const statusIcon = document.getElementById(`${fieldId}-status`);
+                  const errorDiv = document.getElementById(`${fieldId}-error`);
+                  
+                  if (validation.valid) {
+                      if (statusIcon) {
+                          statusIcon.textContent = '✓';
+                          statusIcon.className = 'text-green-400';
+                      }
+                      if (errorDiv) errorDiv.classList.add('hidden');
+                      return true;
+                  } else {
+                      if (statusIcon) {
+                          statusIcon.textContent = '✗';
+                          statusIcon.className = 'text-red-400';
+                      }
+                      if (errorDiv) {
+                          errorDiv.textContent = validation.message;
+                          errorDiv.classList.remove('hidden');
+                      }
+                      return false;
+                  }
+              }
+              
+              async function saveUserInfo() {
+                  const saveBtn = document.getElementById('save-user-info-btn');
+                  const saveText = document.getElementById('save-user-info-text');
+                  const saveLoading = document.getElementById('save-user-info-loading');
+                  
+                  if (!saveBtn || !saveText || !saveLoading) return;
+                  
+                  // Mostrar loading
+                  saveText.classList.add('hidden');
+                  saveLoading.classList.remove('hidden');
+                  saveBtn.disabled = true;
+                  
+                  try {
+                      const fullName = document.getElementById('user-fullname').value;
+                      const income = document.getElementById('user-income').value;
+                      
+                      // Validar campos
+                      const isFullNameValid = validateUserFullName(fullName).valid;
+                      const isIncomeValid = validateUserIncome(income).valid;
+                      
+                      if (!isFullNameValid || !isIncomeValid) {
+                          throw new Error('Por favor, corrija os campos com erro.');
+                      }
+                      
+                      if (currentUser) {
+                          // Salvar no Firestore
+                          const userInfo = {
+                              fullName: fullName,
+                              monthlyIncome: parseFloat(income) || 0,
+                              updatedAt: new Date().toISOString()
+                          };
+                          
+                          await setDoc(doc(db, 'users', currentUser.uid), userInfo, { merge: true });
+                          showNotification('Informações salvas com sucesso!', 'success');
+                      } else {
+                          throw new Error('Usuário não está logado.');
+                      }
+                      
+                  } catch (error) {
+                      console.error('Erro ao salvar informações:', error);
+                      showNotification('Erro ao salvar informações: ' + error.message, 'error');
+                  } finally {
+                      // Restaurar botão
+                      saveText.classList.remove('hidden');
+                      saveLoading.classList.add('hidden');
+                      saveBtn.disabled = false;
+                  }
+              }
+              
+              async function loadUserInfo() {
+                  try {
+                      if (currentUser) {
+                          // Carregar do Firestore
+                          const docRef = doc(db, 'users', currentUser.uid);
+                          const docSnap = await getDoc(docRef);
+                          
+                          if (docSnap.exists()) {
+                              const userData = docSnap.data();
+                              const fullNameInput = document.getElementById('user-fullname');
+                              const incomeInput = document.getElementById('user-income');
+                              
+                              if (fullNameInput) fullNameInput.value = userData.fullName || '';
+                              if (incomeInput) incomeInput.value = userData.monthlyIncome || '';
+                          }
+                      }
+                  } catch (error) {
+                      console.error('Erro ao carregar informações:', error);
+                  }
+              }
+              
+              function initializeUserInfo() {
+                  // Event listeners para validação em tempo real
+                  const fullNameInput = document.getElementById('user-fullname');
+                  if (fullNameInput) {
+                      fullNameInput.addEventListener('input', (e) => {
+                          updateUserFieldValidation('user-fullname', validateUserFullName, e.target.value);
+                      });
+                  }
+                  
+                  const incomeInput = document.getElementById('user-income');
+                  if (incomeInput) {
+                      incomeInput.addEventListener('input', (e) => {
+                          updateUserFieldValidation('user-income', validateUserIncome, e.target.value);
+                      });
+                  }
+                  
+                  // Event listeners para botões
+                  const saveBtn = document.getElementById('save-user-info-btn');
+                  if (saveBtn) {
+                      saveBtn.addEventListener('click', saveUserInfo);
+                  }
+                  
+                  const changePasswordBtn = document.getElementById('change-password-btn');
+                  if (changePasswordBtn) {
+                      changePasswordBtn.addEventListener('click', () => {
+                          openModal('change-password-modal');
+                      });
+                  }
+                  
+                  // Carregar informações automaticamente
+                  loadUserInfo();
+              }
+              
+              // --- SISTEMA DE ALTERAR SENHA ---
+              
+              function validatePasswordStrength(password) {
+                  const criteria = {
+                      length: password.length >= 8,
+                      uppercase: /[A-Z]/.test(password),
+                      lowercase: /[a-z]/.test(password),
+                      number: /\d/.test(password),
+                      special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+                  };
+                  
+                  const score = Object.values(criteria).filter(Boolean).length;
+                  return { criteria, score };
+              }
+              
+              function updatePasswordStrengthIndicator(password) {
+                  const validation = validatePasswordStrength(password);
+                  const { score } = validation;
+                  
+                  // Atualizar barras de força
+                  const bars = ['strength-bar-1', 'strength-bar-2', 'strength-bar-3', 'strength-bar-4'];
+                  bars.forEach((barId, index) => {
+                      const bar = document.getElementById(barId);
+                      if (bar) {
+                          if (index < score) {
+                              if (score <= 2) bar.className = 'h-1 flex-1 bg-red-500 rounded';
+                              else if (score <= 3) bar.className = 'h-1 flex-1 bg-yellow-500 rounded';
+                              else bar.className = 'h-1 flex-1 bg-green-500 rounded';
+                          } else {
+                              bar.className = 'h-1 flex-1 bg-gray-600 rounded';
+                          }
+                      }
+                  });
+                  
+                  // Atualizar texto de força
+                  const strengthText = document.getElementById('password-strength-text');
+                  if (strengthText) {
+                      if (password.length === 0) {
+                          strengthText.textContent = 'Digite uma senha';
+                          strengthText.className = 'text-xs text-gray-400';
+                      } else if (score <= 2) {
+                          strengthText.textContent = 'Senha fraca';
+                          strengthText.className = 'text-xs text-red-400';
+                      } else if (score <= 3) {
+                          strengthText.textContent = 'Senha média';
+                          strengthText.className = 'text-xs text-yellow-400';
+                      } else if (score === 4) {
+                          strengthText.textContent = 'Senha boa';
+                          strengthText.className = 'text-xs text-blue-400';
+                      } else {
+                          strengthText.textContent = 'Senha excelente';
+                          strengthText.className = 'text-xs text-green-400';
+                      }
+                  }
+                  
+                  return score >= 4;
+              }
+              
+              function initializeChangePasswordModal() {
+                  // Event listeners para o modal
+                  const closeBtn = document.getElementById('close-change-password-btn');
+                  const cancelBtn = document.getElementById('cancel-change-password-btn');
+                  const form = document.getElementById('change-password-form');
+                  const toggleBtn = document.getElementById('toggle-new-password');
+                  const newPasswordInput = document.getElementById('new-password');
+                  
+                  if (closeBtn) {
+                      closeBtn.addEventListener('click', () => closeModal('change-password-modal'));
+                  }
+                  
+                  if (cancelBtn) {
+                      cancelBtn.addEventListener('click', () => closeModal('change-password-modal'));
+                  }
+                  
+                  if (form) {
+                      form.addEventListener('submit', (e) => {
+                          e.preventDefault();
+                          // Função de alterar senha será implementada
+                          showNotification('Funcionalidade de alterar senha em desenvolvimento', 'info');
+                      });
+                  }
+                  
+                  if (toggleBtn && newPasswordInput) {
+                      toggleBtn.addEventListener('click', () => {
+                          const type = newPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                          newPasswordInput.setAttribute('type', type);
+                      });
+                  }
+                  
+                  if (newPasswordInput) {
+                      newPasswordInput.addEventListener('input', (e) => {
+                          updatePasswordStrengthIndicator(e.target.value);
+                      });
+                  }
+              }
+              
               // --- INTEGRAÇÃO BANCÁRIA REMOVIDA ---
               // A integração com APIs bancárias foi removida devido à complexidade de implementação
               
@@ -6450,11 +6787,21 @@
         }
             
             function updateNetWorthCard() {
-            const totalIncomeAllTime = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-            const totalExpenseAllTime = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-            const currentBalance = totalIncomeAllTime - totalExpenseAllTime;
+            // Calcular saldo do mês atual
+            const today = new Date();
+            const currentMonth = today.toISOString().slice(0, 7); // YYYY-MM
+            
+            const monthlyIncome = transactions.filter(t => 
+                t.type === 'income' && t.date.startsWith(currentMonth)
+            ).reduce((sum, t) => sum + t.amount, 0);
+            
+            const monthlyExpense = transactions.filter(t => 
+                t.type === 'expense' && t.date.startsWith(currentMonth)
+            ).reduce((sum, t) => sum + t.amount, 0);
+            
+            const monthlyBalance = monthlyIncome - monthlyExpense;
             const totalInGoals = (goals || []).reduce((sum, goal) => sum + goal.savedAmount, 0);
-            const netWorth = currentBalance + totalInGoals;
+            const netWorth = monthlyBalance + totalInGoals;
 
             document.getElementById('total-in-goals').textContent = formatCurrency(totalInGoals);
             document.getElementById('net-worth').textContent = formatCurrency(netWorth);
@@ -6498,10 +6845,10 @@
             }); 
         }
          
-        function updateCharts() { 
+        async function updateCharts() { 
             updateExpenseChart(); 
-            updateBalanceHistoryChart(); 
-            updateFutureExpensesChart(); 
+            updateBalanceHistoryChart();
+            await updateFutureExpensesChart();
         }
          
         function updateCategorySuggestions() {
@@ -6567,21 +6914,31 @@
                             ticks: { 
                                 color: '#a0a0a0', 
                                 font: { family: "'Inter', sans-serif" },
-                                callback: function(value) { return formatCurrency(value); }
+                                callback: function(value) { return formatCurrencyForCharts(value); }
                             },
                             grid: { color: 'rgba(0, 212, 255, 0.1)' }
                         }
                     },
                     plugins: { 
                         datalabels: {
-                            display: false
+                            display: true,
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#ffffff',
+                            font: {
+                                weight: 'bold',
+                                size: 11
+                            },
+                            formatter: function(value) {
+                                return formatCurrencyForDatalabels(value);
+                            }
                         },
                         legend: { 
                             display: false
                         }, 
                         tooltip: { 
                             callbacks: { 
-                                label: context => context.dataset.label + ': ' + formatCurrency(context.parsed.y) 
+                                label: context => context.dataset.label + ': ' + formatCurrencyForCharts(context.parsed.y) 
                             } 
                         } 
                     }
@@ -6667,6 +7024,9 @@
                         } 
                     }, 
                     plugins: { 
+                        datalabels: {
+                            display: false
+                        },
                         legend: { display: false }, 
                         tooltip: { 
                             callbacks: { 
@@ -6678,14 +7038,14 @@
             });   
         }
          
-        function updateFutureExpensesChart() { 
+        async function updateFutureExpensesChart() { 
             const ticksColor = '#a0a0a0'; 
             const gridColor = 'rgba(0, 212, 255, 0.1)'; 
             const ctx = document.getElementById('futureExpensesChart').getContext('2d'); 
             if (window.futureExpensesChart && typeof window.futureExpensesChart.destroy === 'function') { window.futureExpensesChart.destroy(); } 
             
             // Calcular despesas futuras para os próximos 6 meses
-            const futureData = calculateFutureExpenses();
+            const futureData = await calculateFutureExpenses();
             
             window.futureExpensesChart = new Chart(ctx, { 
                 type: 'line', 
@@ -6715,6 +7075,15 @@
                             backgroundColor: 'rgba(59, 130, 246, 0.1)', 
                             tension: 0.4, 
                             fill: true 
+                        },
+                        { 
+                            label: 'Saldo Líquido', 
+                            data: futureData.netBalance, 
+                            borderColor: '#22c55e', 
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)', 
+                            tension: 0.4, 
+                            fill: false,
+                            borderWidth: 3
                         }
                     ] 
                 }, 
@@ -6725,7 +7094,7 @@
                         y: { 
                             ticks: { 
                                 color: ticksColor, 
-                                callback: value => formatCurrency(value) 
+                                callback: value => formatCurrencyForCharts(value) 
                             }, 
                             grid: { color: gridColor } 
                         }, 
@@ -6735,6 +7104,9 @@
                         } 
                     }, 
                     plugins: { 
+                        datalabels: {
+                            display: false
+                        },
                         legend: { 
                             position: 'top', 
                             labels: { 
@@ -6744,7 +7116,7 @@
                         }, 
                         tooltip: { 
                             callbacks: { 
-                                label: context => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}` 
+                                label: context => `${context.dataset.label}: ${formatCurrencyForCharts(context.parsed.y)}` 
                             } 
                         } 
                     } 
@@ -6752,9 +7124,24 @@
             }); 
         }
         
-        function calculateFutureExpenses() {
-            const data = { labels: [], recurring: [], installments: [], total: [] };
+        async function calculateFutureExpenses() {
+            const data = { labels: [], recurring: [], installments: [], total: [], netBalance: [] };
             const today = new Date();
+            
+            // Obter renda mensal do usuário
+            let monthlyIncome = 0;
+            if (currentUser) {
+                try {
+                    const docRef = doc(db, 'users', currentUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        monthlyIncome = userData.monthlyIncome || 0;
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar renda:', error);
+                }
+            }
             
             // Próximos 6 meses
             for (let i = 0; i < 6; i++) {
@@ -6769,25 +7156,194 @@
                     return sum + template.amount;
                 }, 0);
                 
-                // Calcular parcelas futuras
-                const installmentsAmount = transactions
-                    .filter(t => t.installments && t.installments.length > 0)
-                    .reduce((sum, t) => {
+                // Calcular parcelas futuras - melhorado
+                let installmentsAmount = 0;
+                
+                // Parcelas de transações existentes
+                transactions.forEach(t => {
+                    if (t.installments && t.installments.length > 0) {
                         const futureInstallments = t.installments.filter(inst => 
                             inst.date.startsWith(monthStr) && new Date(inst.date) >= today
                         );
-                        return sum + futureInstallments.reduce((instSum, inst) => instSum + inst.amount, 0);
-                    }, 0);
+                        installmentsAmount += futureInstallments.reduce((instSum, inst) => instSum + inst.amount, 0);
+                    }
+                });
+                
+                // Parcelas de transações parceladas (buscar por descrição)
+                const parceladaTransactions = transactions.filter(t => 
+                    t.description.includes('(') && t.description.includes('/') && 
+                    t.date.startsWith(monthStr) && new Date(t.date) >= today
+                );
+                
+                parceladaTransactions.forEach(t => {
+                    installmentsAmount += t.amount;
+                });
                 
                 const totalAmount = recurringAmount + installmentsAmount;
+                
+                // Calcular saldo líquido (renda - despesas totais)
+                const netBalance = monthlyIncome - totalAmount;
                 
                 data.recurring.push(recurringAmount);
                 data.installments.push(installmentsAmount);
                 data.total.push(totalAmount);
+                data.netBalance.push(Math.max(0, netBalance)); // Não mostrar valores negativos
             }
             
             return data;
-        }  
+        }
+        
+        // --- GRÁFICO DE PROJEÇÃO SALARIAL ---
+        
+        function updateSalaryProjectionChart() {
+            const ticksColor = '#a0a0a0';
+            const gridColor = 'rgba(0, 212, 255, 0.1)';
+            const ctx = document.getElementById('salaryProjectionChart');
+            
+            if (!ctx) return;
+            
+            if (window.salaryProjectionChart && typeof window.salaryProjectionChart.destroy === 'function') {
+                window.salaryProjectionChart.destroy();
+            }
+            
+            // Calcular projeção salarial
+            const projectionData = calculateSalaryProjection();
+            
+            window.salaryProjectionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: projectionData.labels,
+                    datasets: [
+                        {
+                            label: 'Renda Bruta',
+                            data: projectionData.grossIncome,
+                            backgroundColor: 'rgba(34, 197, 94, 0.3)',
+                            borderColor: '#22c55e',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'INSS (12%)',
+                            data: projectionData.inss,
+                            backgroundColor: 'rgba(239, 68, 68, 0.3)',
+                            borderColor: '#ef4444',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Despesas Recorrentes',
+                            data: projectionData.recurringExpenses,
+                            backgroundColor: 'rgba(245, 158, 11, 0.3)',
+                            borderColor: '#f59e0b',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Salário Líquido',
+                            data: projectionData.netSalary,
+                            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 2,
+                            type: 'line',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            ticks: {
+                                color: ticksColor,
+                                callback: value => formatCurrencyForCharts(value)
+                            },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: ticksColor },
+                            grid: { color: gridColor }
+                        }
+                    },
+                    plugins: {
+                        datalabels: {
+                            display: false
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: ticksColor,
+                                font: { family: "'Inter', sans-serif" }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatCurrencyForCharts(context.parsed.y)}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        async function calculateSalaryProjection() {
+            const data = {
+                labels: [],
+                grossIncome: [],
+                inss: [],
+                recurringExpenses: [],
+                netSalary: []
+            };
+            
+            // Obter renda mensal do usuário
+            let monthlyIncome = 0;
+            if (currentUser) {
+                try {
+                    const docRef = doc(db, 'users', currentUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        monthlyIncome = userData.monthlyIncome || 0;
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar renda:', error);
+                }
+            }
+            
+            // Calcular despesas recorrentes médias
+            const recurringExpenseAmount = calculateRecurringExpenses();
+            
+            // Próximos 6 meses
+            const today = new Date();
+            for (let i = 0; i < 6; i++) {
+                const futureDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
+                const monthName = futureDate.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+                
+                const inssAmount = monthlyIncome * 0.12; // 12% INSS
+                const netAmount = monthlyIncome - inssAmount - recurringExpenseAmount;
+                
+                data.labels.push(monthName);
+                data.grossIncome.push(monthlyIncome);
+                data.inss.push(inssAmount);
+                data.recurringExpenses.push(recurringExpenseAmount);
+                data.netSalary.push(Math.max(0, netAmount)); // Não pode ser negativo
+            }
+            
+            return data;
+        }
+        
+        function calculateRecurringExpenses() {
+            // Calcular média de despesas recorrentes dos últimos 3 meses
+            const today = new Date();
+            const threeMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 3, 1);
+            
+            const recurringExpenses = transactions.filter(t => 
+                t.type === 'expense' && 
+                new Date(t.date) >= threeMonthsAgo &&
+                (t.isRecurring || t.category === 'Moradia' || t.category === 'Transporte' || t.category === 'Alimentação')
+            );
+            
+            const totalRecurring = recurringExpenses.reduce((sum, t) => sum + t.amount, 0);
+            return totalRecurring / 3; // Média mensal
+        }
+  
     function renderBudgetsPage() {
         const listEl = document.getElementById('budgets-list');
         listEl.innerHTML = '';
@@ -6973,8 +7529,11 @@
 
         
         // Event listeners para redefinir senha
-        document.getElementById('reset-password-btn').addEventListener('click', resetPassword);
-        document.getElementById('generate-password-btn').addEventListener('click', generateSecurePassword);
+        const resetPasswordBtn = document.getElementById('reset-password-btn');
+        const generatePasswordBtn = document.getElementById('generate-password-btn');
+        
+        if (resetPasswordBtn) resetPasswordBtn.addEventListener('click', resetPassword);
+        if (generatePasswordBtn) generatePasswordBtn.addEventListener('click', generateSecurePassword);
         
         document.getElementById('transaction-form').addEventListener('submit', handleFormSubmit);
         document.getElementById('cancel-btn').addEventListener('click', closeAllModals);
@@ -7022,6 +7581,7 @@
         document.getElementById('cancel-expense-alerts-btn').addEventListener('click', closeAllModals);
         document.getElementById('save-expense-alerts-btn').addEventListener('click', saveExpenseAlertsSettings);
         document.getElementById('cancel-reminder-btn').addEventListener('click', closeAllModals);
+        document.getElementById('test-monthly-reset').addEventListener('click', testMonthlyReset);
         // Event listeners do assistente IA serão configurados após as funções serem definidas
         
         // Event listeners para email removidos
@@ -7126,7 +7686,68 @@
             closeAllModals();
         }
     }
-    function openRecurringModal() { const listEl = document.getElementById('recurring-list'); listEl.innerHTML = ''; if (recurringTemplates.length === 0) { listEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma despesa recorrente encontrada.</p>'; } else { recurringTemplates.forEach(template => { const item = document.createElement('div'); item.className = 'flex justify-between items-center p-2 bg-gray-50 dark:bg-slate-700/50 rounded'; item.innerHTML = `<div><p class="font-semibold">${template.description}</p><p class="text-sm text-gray-600 dark:text-gray-400">${formatCurrency(template.amount)} / mês - Cat: ${template.category}</p></div><button data-id="${template.id}" class="delete-recurring-btn p-2 text-red-500 hover:text-red-700">&times;</button>`; item.querySelector('.delete-recurring-btn').addEventListener('click', () => { deleteRecurringTemplate(template.id); openRecurringModal(); }); listEl.appendChild(item); }); } openModal(modals.recurring); }
+    function openRecurringModal() { 
+        const listEl = document.getElementById('recurring-list'); 
+        listEl.innerHTML = ''; 
+        
+        // Buscar transações recorrentes salvas
+        const recurringTransactions = transactions.filter(t => t.isRecurring === true);
+        
+        // Combinar templates e transações recorrentes
+        const allRecurring = [...recurringTemplates];
+        
+        // Adicionar transações recorrentes únicas (que não estão nos templates)
+        recurringTransactions.forEach(transaction => {
+            const existsInTemplates = recurringTemplates.some(template => 
+                template.description === transaction.description && 
+                template.amount === transaction.amount
+            );
+            
+            if (!existsInTemplates) {
+                allRecurring.push({
+                    id: 'trans_' + transaction.id,
+                    description: transaction.description,
+                    amount: transaction.amount,
+                    category: transaction.category,
+                    isTransaction: true
+                });
+            }
+        });
+        
+        if (allRecurring.length === 0) { 
+            listEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma despesa recorrente encontrada.</p>'; 
+        } else { 
+            allRecurring.forEach(item => { 
+                const itemEl = document.createElement('div'); 
+                itemEl.className = 'flex justify-between items-center p-2 bg-gray-50 dark:bg-slate-700/50 rounded'; 
+                
+                const typeLabel = item.isTransaction ? ' (Transação)' : ' (Template)';
+                itemEl.innerHTML = `<div><p class="font-semibold">${item.description}${typeLabel}</p><p class="text-sm text-gray-600 dark:text-gray-400">${formatCurrency(item.amount)} / mês - Cat: ${item.category}</p></div><button data-id="${item.id}" data-type="${item.isTransaction ? 'transaction' : 'template'}" class="delete-recurring-btn p-2 text-red-500 hover:text-red-700">&times;</button>`; 
+                
+                itemEl.querySelector('.delete-recurring-btn').addEventListener('click', (e) => { 
+                    const id = e.target.getAttribute('data-id');
+                    const type = e.target.getAttribute('data-type');
+                    
+                    if (type === 'template') {
+                        deleteRecurringTemplate(id); 
+                    } else {
+                        // Remover flag recorrente da transação
+                        const transactionId = id.replace('trans_', '');
+                        const transaction = transactions.find(t => t.id === transactionId);
+                        if (transaction) {
+                            transaction.isRecurring = false;
+                            saveAndRefresh();
+                        }
+                    }
+                    openRecurringModal(); 
+                }); 
+                
+                listEl.appendChild(itemEl); 
+            }); 
+        } 
+        
+        openModal(modals.recurring); 
+    }
     function openGoalModal() { document.getElementById('goal-form').reset(); document.getElementById('action-plan-display').classList.add('hidden'); temporaryActionPlan = null; openModal(modals.goal); }
     function openAddFundsModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal) { document.getElementById('add-funds-form').reset(); document.getElementById('add-funds-goal-id').value = goalId; document.getElementById('add-funds-modal-title').textContent = `Adicionar a: ${goal.name}`; openModal(modals.addFunds); } }
     function openViewPlanModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal && goal.actionPlan) { document.getElementById('view-plan-title').textContent = `Plano para: ${goal.name}`; const listEl = document.getElementById('view-plan-list'); listEl.innerHTML = goal.actionPlan.map(step => `<li class="p-2 bg-gray-100 dark:bg-slate-800/50 rounded">${step}</li>`).join(''); openModal(modals.viewPlan); } }
@@ -7466,6 +8087,9 @@
         
         // Carregar configurações de notificação
         loadNotificationSettings();
+        
+        // Atualizar exibição da data do último reset
+        updateLastResetDisplay();
     }
     
     function saveSettingsPage() {
@@ -9338,10 +9962,15 @@
      }
      
      // Configurar event listeners do assistente IA após as funções serem definidas
-     document.getElementById('ai-assistant-btn').addEventListener('click', openAIAssistant);
-     document.getElementById('close-ai-assistant-btn').addEventListener('click', closeAIAssistant);
-     document.getElementById('send-ai-message').addEventListener('click', sendAIMessage);
-     document.getElementById('ai-chat-input').addEventListener('keypress', handleAIChatKeypress);
+     const aiAssistantBtn = document.getElementById('ai-assistant-btn');
+     const closeAiAssistantBtn = document.getElementById('close-ai-assistant-btn');
+     const sendAiMessageBtn = document.getElementById('send-ai-message');
+     const aiChatInput = document.getElementById('ai-chat-input');
+     
+     if (aiAssistantBtn) aiAssistantBtn.addEventListener('click', openAIAssistant);
+     if (closeAiAssistantBtn) closeAiAssistantBtn.addEventListener('click', closeAIAssistant);
+     if (sendAiMessageBtn) sendAiMessageBtn.addEventListener('click', sendAIMessage);
+     if (aiChatInput) aiChatInput.addEventListener('keypress', handleAIChatKeypress);
 
     </script>
 </body>
