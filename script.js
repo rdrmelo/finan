@@ -1,5 +1,5 @@
  
- // Firebase imports and configuration
+// Firebase imports and configuration
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import {
             getAuth,
@@ -1036,6 +1036,7 @@
             
             transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             updateSummary();
+            setCurrentMonthFilter(); // Definir mês atual como padrão
             applyFilters(); // Isso também renderiza a lista de transações
             updateCharts();
             updateCategorySuggestions();
@@ -5044,6 +5045,7 @@
         clearFiltersBtn.addEventListener('click', () => {   
             filterForm.reset();
             clearFilterTags();
+            setCurrentMonthFilter();
             applyFilters();    
         });
         
@@ -5263,11 +5265,23 @@
     function applyFilters() {
         const description = document.getElementById('filter-description').value.toLowerCase();
         const category = document.getElementById('filter-category').value;
+        const filterMonth = document.getElementById('filter-month').value;
         const startDate = document.getElementById('filter-start-date').value;
         const endDate = document.getElementById('filter-end-date').value;
         const selectedTags = getSelectedFilterTags();
 
         let filteredTransactions = [...transactions];
+        
+        // Se nenhum mês específico for selecionado, mostrar apenas o mês atual
+        if (!filterMonth && !startDate && !endDate) {
+            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+            filteredTransactions = filteredTransactions.filter(t => t.date.startsWith(currentMonth));
+        }
+        // Se um mês específico for selecionado, filtrar por esse mês
+        else if (filterMonth) {
+            filteredTransactions = filteredTransactions.filter(t => t.date.startsWith(filterMonth));
+        }
+        
         if (description) { filteredTransactions = filteredTransactions.filter(t => t.description.toLowerCase().includes(description)); }
         if (category) { filteredTransactions = filteredTransactions.filter(t => t.category === category); }
         if (startDate) { filteredTransactions = filteredTransactions.filter(t => t.date >= startDate); }
@@ -5332,6 +5346,14 @@
     function clearFilterTags() {
         const filterTagsSelect = document.getElementById('filter-tags');
         filterTagsSelect.value = '';
+    }
+    
+    function setCurrentMonthFilter() {
+        const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+        const filterMonthInput = document.getElementById('filter-month');
+        if (filterMonthInput) {
+            filterMonthInput.value = currentMonth;
+        }
     }
 
     function openBudgetModal() {
