@@ -491,9 +491,9 @@
             const collections = ['transactions', 'goals', 'categories', 'budgets', 'recurringTemplates', 'paymentReminders', 'expenseAlerts'];
             
             collections.forEach(colName => {
-                const q = query(collection(db, `users/${user.uid}/${colName}`));
-                const unsub = onSnapshot(q, (snapshot) => {
-                    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const q = query(collection(db, `users/${user.uid}/${colName}`));
+            const unsub = onSnapshot(q, (snapshot) => {
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     
                     // Atualizar tanto window quanto variáveis globais
                     window[colName] = data;
@@ -518,6 +518,7 @@
                 unsubscribeListeners.push(unsub);
             });
             switchPage('dashboard');
+            setTimeout(setInitialFilter, 150);
             } catch (error) {
                 console.error('Erro na inicialização da aplicação:', error);
                 // Mesmo com erro, tenta continuar com a inicialização básica
@@ -902,35 +903,33 @@
             }
         }
             
-            function addRecurringTemplate(templateData) { 
-                recurringTemplates.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 9), ...templateData });
-                saveAndRefresh();
+            function addRecurringTemplate(templateData) {
+                // Adiciona um ID único ao template
+                const newTemplate = { id: Date.now().toString() + Math.random().toString(36).substr(2, 9), ...templateData };
+                
+                // Adiciona o novo template à array local
+                recurringTemplates.push(newTemplate);
+                
+                // **CORREÇÃO CRÍTICA**: Salva a array atualizada no localStorage
+                saveData(); 
+                
+                // Atualiza a interface para refletir a mudança
+                updateUI();
+                
+                showNotification('Despesa recorrente adicionada com sucesso!', 'success');
             }
 
-            function deleteRecurringTemplate(id) { recurringTemplates = recurringTemplates.filter(t => t.id !== id); saveAndRefresh(); }
-            async function addGoal(goalData) {
-                if (!currentUser) {
-                    showNotification('Usuário não autenticado. Faça login novamente.', 'error');
-                    return;
-                }
+            function deleteRecurringTemplate(templateId) {
+                // Filtra a array local, removendo o template com o ID correspondente
+                recurringTemplates = recurringTemplates.filter(t => t.id !== templateId);
                 
-                const newGoal = { id: Date.now().toString() + Math.random().toString(36).substr(2, 9), ...goalData };
+                // Salva a lista de templates atualizada no localStorage
+                saveData();
                 
-                try {
-                    if (navigator.onLine) {
-                        await addDoc(collection(db, `users/${currentUser.uid}/goals`), newGoal);
-                        showNotification('Meta adicionada com sucesso!', 'success');
-                    } else {
-                        storePendingData('goals', newGoal);
-                        registerBackgroundSync('background-sync-goals');
-                        showNotification('Meta salva offline. Será sincronizada quando a conexão for restaurada.', 'info');
-                    }
-                } catch (error) {
-                    console.error('Erro ao adicionar meta:', error);
-                    storePendingData('goals', newGoal);
-                    registerBackgroundSync('background-sync-goals');
-                    showNotification('Erro na conexão. Meta salva offline para sincronização posterior.', 'warning');
-                }
+                // Reabre o modal para mostrar a lista atualizada
+                openRecurringModal();
+                
+                showNotification('A despesa recorrente foi removida e não será mais gerada.', 'success');
             }
             
             async function deleteGoal(id) {
@@ -1027,18 +1026,19 @@
 
             function updateUI() {
             if (!currentUser) return;
-            
+
             // Garantir que os arrays existem, mesmo que vazios
             if (!transactions) transactions = [];
             if (!goals) goals = [];
             if (!categories) categories = [];
             if (!budgets) budgets = [];
-            
+
             transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             updateSummary();
             applyFilters(); // Isso também renderiza a lista de transações
             updateCharts();
             updateCategorySuggestions();
+            populateYearFilter(); // <-- Linha adicionada
             populateCategoryFilter();
             populateFilterTags();
             renderGoals();
@@ -1047,10 +1047,10 @@
             updateNetWorthCard();
             renderCalendar();
 
-            updateExecutiveDashboard(); // Atualizar score financeiro
-            updateComparisonCharts('monthly'); // Atualizar projeções
+            updateExecutiveDashboard();
+            updateComparisonCharts('monthly');
         }
-        
+                
 
         
 
@@ -4342,9 +4342,30 @@
          
         function populateCategoryFilter() {
             const filterSelect = document.getElementById('filter-category');
+            if (!filterSelect) return;
+
             const currentVal = filterSelect.value;
-            filterSelect.innerHTML = '<option value="">Todas</option>';
-            (window.categories || []).sort((a, b) => a.name.localeCompare(b.name)).forEach(cat => { const option = document.createElement('option'); option.value = cat.name; option.textContent = cat.name; filterSelect.appendChild(option); });
+            filterSelect.innerHTML = '<option value="">Todas</option>'; // Limpa o seletor
+
+            // Utiliza um Set para garantir que os nomes das categorias sejam únicos
+            const uniqueCategoryNames = new Set();
+            (window.categories || []).forEach(cat => {
+                if (cat.name) { // Garante que a categoria tem um nome
+                    uniqueCategoryNames.add(cat.name);
+                }
+            });
+
+            // Converte o Set para um array, ordena alfabeticamente e cria as opções
+            const sortedNames = Array.from(uniqueCategoryNames).sort((a, b) => a.localeCompare(b));
+
+            sortedNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                filterSelect.appendChild(option);
+            });
+
+            // Restaura o valor que estava selecionado anteriormente, se ainda existir
             filterSelect.value = currentVal;
         }
 
@@ -4533,14 +4554,7 @@
                 data: { 
                     labels: futureData.labels, 
                     datasets: [
-                        { 
-                            label: 'Despesas Recorrentes', 
-                            data: futureData.recurring, 
-                            borderColor: '#ef4444', 
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)', 
-                            tension: 0.4, 
-                            fill: false 
-                        },
+                        
                         { 
                             label: 'Parcelas', 
                             data: futureData.installments, 
@@ -4548,14 +4562,6 @@
                             backgroundColor: 'rgba(245, 158, 11, 0.1)', 
                             tension: 0.4, 
                             fill: false 
-                        },
-                        { 
-                            label: 'Total Previsto', 
-                            data: futureData.total, 
-                            borderColor: '#3b82f6', 
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)', 
-                            tension: 0.4, 
-                            fill: true 
                         },
                         { 
                             label: 'Saldo Líquido', 
@@ -4673,156 +4679,58 @@
             
             return data;
         }
-        
-        // --- GRÁFICO DE PROJEÇÃO SALARIAL ---
-        
-        function updateSalaryProjectionChart() {
-            const ticksColor = '#a0a0a0';
-            const gridColor = 'rgba(0, 212, 255, 0.1)';
-            const ctx = document.getElementById('salaryProjectionChart');
-            
-            if (!ctx) return;
-            
-            if (window.salaryProjectionChart && typeof window.salaryProjectionChart.destroy === 'function') {
-                window.salaryProjectionChart.destroy();
-            }
-            
-            // Calcular projeção salarial
-            const projectionData = calculateSalaryProjection();
-            
-            window.salaryProjectionChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: projectionData.labels,
-                    datasets: [
-                        {
-                            label: 'Renda Bruta',
-                            data: projectionData.grossIncome,
-                            backgroundColor: 'rgba(34, 197, 94, 0.3)',
-                            borderColor: '#22c55e',
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'INSS (12%)',
-                            data: projectionData.inss,
-                            backgroundColor: 'rgba(239, 68, 68, 0.3)',
-                            borderColor: '#ef4444',
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Despesas Recorrentes',
-                            data: projectionData.recurringExpenses,
-                            backgroundColor: 'rgba(245, 158, 11, 0.3)',
-                            borderColor: '#f59e0b',
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Salário Líquido',
-                            data: projectionData.netSalary,
-                            backgroundColor: 'rgba(59, 130, 246, 0.3)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 2,
-                            type: 'line',
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            ticks: {
-                                color: ticksColor,
-                                callback: value => formatCurrencyForCharts(value)
-                            },
-                            grid: { color: gridColor }
-                        },
-                        x: {
-                            ticks: { color: ticksColor },
-                            grid: { color: gridColor }
-                        }
-                    },
-                    plugins: {
-                        datalabels: {
-                            display: false
-                        },
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: ticksColor,
-                                font: { family: "'Inter', sans-serif" }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: context => `${context.dataset.label}: ${formatCurrencyForCharts(context.parsed.y)}`
-                            }
-                        }
-                    }
+        function populateYearFilter() {
+            const yearSelect = document.getElementById('filter-year');
+            if (!yearSelect) return;
+
+            const existingYears = new Set(Array.from(yearSelect.options).map(opt => opt.value));
+            const transactionYears = new Set(transactions.map(t => t.date.substring(0, 4)));
+
+            // Garante que o ano atual esteja sempre disponível como opção
+            transactionYears.add(new Date().getFullYear().toString());
+
+            let yearsChanged = false;
+
+            transactionYears.forEach(year => {
+                if (!existingYears.has(year)) {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                    yearsChanged = true;
                 }
             });
-        }
-        
-        async function calculateSalaryProjection() {
-            const data = {
-                labels: [],
-                grossIncome: [],
-                inss: [],
-                recurringExpenses: [],
-                netSalary: []
-            };
             
-            // Obter renda mensal do usuário
-            let monthlyIncome = 0;
-            if (currentUser) {
-                try {
-                    const docRef = doc(db, 'users', currentUser.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        const userData = docSnap.data();
-                        monthlyIncome = userData.monthlyIncome || 0;
-                    }
-                } catch (error) {
-                    console.error('Erro ao carregar renda:', error);
-                }
+            // Reordena as opções se um novo ano foi adicionado
+            if (yearsChanged) {
+                const options = Array.from(yearSelect.options);
+                options.sort((a, b) => {
+                    if (a.value === "") return -1; // "Todos" sempre primeiro
+                    if (b.value === "") return 1;
+                    return b.value.localeCompare(a.value); // Ordena anos em ordem decrescente
+                });
+                yearSelect.innerHTML = '';
+                options.forEach(opt => yearSelect.appendChild(opt));
             }
-            
-            // Calcular despesas recorrentes médias
-            const recurringExpenseAmount = calculateRecurringExpenses();
-            
-            // Próximos 6 meses
-            const today = new Date();
-            for (let i = 0; i < 6; i++) {
-                const futureDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
-                const monthName = futureDate.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
-                
-                const inssAmount = monthlyIncome * 0.12; // 12% INSS
-                const netAmount = monthlyIncome - inssAmount - recurringExpenseAmount;
-                
-                data.labels.push(monthName);
-                data.grossIncome.push(monthlyIncome);
-                data.inss.push(inssAmount);
-                data.recurringExpenses.push(recurringExpenseAmount);
-                data.netSalary.push(Math.max(0, netAmount)); // Não pode ser negativo
-            }
-            
-            return data;
         }
-        
-        function calculateRecurringExpenses() {
-            // Calcular média de despesas recorrentes dos últimos 3 meses
-            const today = new Date();
-            const threeMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 3, 1);
-            
-            const recurringExpenses = transactions.filter(t => 
-                t.type === 'expense' && 
-                new Date(t.date) >= threeMonthsAgo &&
-                (t.isRecurring || t.category === 'Moradia' || t.category === 'Transporte' || t.category === 'Alimentação')
-            );
-            
-            const totalRecurring = recurringExpenses.reduce((sum, t) => sum + t.amount, 0);
-            return totalRecurring / 3; // Média mensal
+
+        function setInitialFilter() {
+            const now = new Date();
+            const currentMonth = (now.getMonth() + 1).toString().padStart(2, '0');
+            const currentYear = now.getFullYear().toString();
+
+            const monthSelect = document.getElementById('filter-month');
+            const yearSelect = document.getElementById('filter-year');
+
+            if (monthSelect) {
+                monthSelect.value = currentMonth;
+            }
+
+            if (yearSelect) {
+                yearSelect.value = currentYear;
+            }
+
+            applyFilters();
         }
   
     function renderBudgetsPage() {
@@ -5167,68 +5075,56 @@
             closeAllModals();
         }
     }
-    function openRecurringModal() { 
-        const listEl = document.getElementById('recurring-list'); 
-        listEl.innerHTML = ''; 
-        
-        // Buscar transações recorrentes salvas
-        const recurringTransactions = transactions.filter(t => t.isRecurring === true);
-        
-        // Combinar templates e transações recorrentes
-        const allRecurring = [...recurringTemplates];
-        
-        // Adicionar transações recorrentes únicas (que não estão nos templates)
-        recurringTransactions.forEach(transaction => {
-            const existsInTemplates = recurringTemplates.some(template => 
-                template.description === transaction.description && 
-                template.amount === transaction.amount
-            );
-            
-            if (!existsInTemplates) {
-                allRecurring.push({
-                    id: 'trans_' + transaction.id,
-                    description: transaction.description,
-                    amount: transaction.amount,
-                    category: transaction.category,
-                    isTransaction: true
-                });
+    function openRecurringModal() {
+    const listEl = document.getElementById('recurring-list');
+    listEl.innerHTML = '';
+
+    // Cria um Map para armazenar apenas uma transação por cada tipo de recorrência
+    // A chave será o recurringTemplateId e o valor será o objeto da transação
+    const uniqueRecurring = new Map();
+
+    // Itera sobre TODAS as transações
+    transactions.forEach(t => {
+        // Se a transação tem um ID de recorrência e ainda não foi adicionada ao nosso Map
+        if (t.recurringTemplateId && !uniqueRecurring.has(t.recurringTemplateId)) {
+            uniqueRecurring.set(t.recurringTemplateId, t);
+        }
+    });
+
+    if (uniqueRecurring.size === 0) {
+        listEl.innerHTML = '<p class="text-gray-400 text-center py-4">Nenhuma despesa recorrente encontrada.</p>';
+    } else {
+        // Converte o Map para uma array e a exibe
+        Array.from(uniqueRecurring.values()).forEach(transaction => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'flex justify-between items-center p-3 bg-slate-800/50 rounded-lg';
+
+            itemEl.innerHTML = `
+                <div>
+                    <p class="font-semibold text-text-primary">${transaction.description.replace(/\s\(\d+\/\d+\)/, '')}</p>
+                    <p class="text-sm text-gray-400">
+                        ${formatCurrency(transaction.amount)} / mês - Categoria: ${transaction.category}
+                    </p>
+                </div>
+                <button data-template-id="${transaction.recurringTemplateId}" class="delete-recurring-btn p-2 text-red-400 hover:text-red-600">&times;</button>
+            `;
+
+            listEl.appendChild(itemEl);
+        });
+    }
+
+    // Adiciona os event listeners para os botões de deletar DEPOIS de criar a lista
+    listEl.querySelectorAll('.delete-recurring-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const templateId = e.target.closest('button').dataset.templateId;
+            if (confirm('Isso irá parar de gerar futuras transações para este item. Deseja continuar?')) {
+                deleteRecurringTemplate(templateId);
             }
         });
-        
-        if (allRecurring.length === 0) { 
-            listEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Nenhuma despesa recorrente encontrada.</p>'; 
-        } else { 
-            allRecurring.forEach(item => { 
-                const itemEl = document.createElement('div'); 
-                itemEl.className = 'flex justify-between items-center p-2 bg-gray-50 dark:bg-slate-700/50 rounded'; 
-                
-                const typeLabel = item.isTransaction ? ' (Transação)' : ' (Template)';
-                itemEl.innerHTML = `<div><p class="font-semibold">${item.description}${typeLabel}</p><p class="text-sm text-gray-600 dark:text-gray-400">${formatCurrency(item.amount)} / mês - Cat: ${item.category}</p></div><button data-id="${item.id}" data-type="${item.isTransaction ? 'transaction' : 'template'}" class="delete-recurring-btn p-2 text-red-500 hover:text-red-700">&times;</button>`; 
-                
-                itemEl.querySelector('.delete-recurring-btn').addEventListener('click', (e) => { 
-                    const id = e.target.getAttribute('data-id');
-                    const type = e.target.getAttribute('data-type');
-                    
-                    if (type === 'template') {
-                        deleteRecurringTemplate(id); 
-                    } else {
-                        // Remover flag recorrente da transação
-                        const transactionId = id.replace('trans_', '');
-                        const transaction = transactions.find(t => t.id === transactionId);
-                        if (transaction) {
-                            transaction.isRecurring = false;
-                            saveAndRefresh();
-                        }
-                    }
-                    openRecurringModal(); 
-                }); 
-                
-                listEl.appendChild(itemEl); 
-            }); 
-        } 
-        
-        openModal(modals.recurring); 
-    }
+    });
+
+    openModal(modals.recurring);
+}
     function openGoalModal() { document.getElementById('goal-form').reset(); document.getElementById('action-plan-display').classList.add('hidden'); temporaryActionPlan = null; openModal(modals.goal); }
     function openAddFundsModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal) { document.getElementById('add-funds-form').reset(); document.getElementById('add-funds-goal-id').value = goalId; document.getElementById('add-funds-modal-title').textContent = `Adicionar a: ${goal.name}`; openModal(modals.addFunds); } }
     function openViewPlanModal(goalId) { const goal = goals.find(g => g.id === goalId); if (goal && goal.actionPlan) { document.getElementById('view-plan-title').textContent = `Plano para: ${goal.name}`; const listEl = document.getElementById('view-plan-list'); listEl.innerHTML = goal.actionPlan.map(step => `<li class="p-2 bg-gray-100 dark:bg-slate-800/50 rounded">${step}</li>`).join(''); openModal(modals.viewPlan); } }
@@ -5247,9 +5143,31 @@
     }
     async function handleCategoryFormSubmit(e) { e.preventDefault(); const id = document.getElementById('category-edit-id').value; const name = document.getElementById('category-name-input').value; const color = document.getElementById('category-color-input').value; if (id) { await updateCategory(id, { name, color }); } else { await addCategory({ name, color }); } closeAllModals(); openCategoryManagerModal(); }
     function renderCategoryList() {
-        const listEl = document.getElementById('category-list'); listEl.innerHTML = ''; if (categories.length === 0) { listEl.innerHTML = '<p class="text-center text-gray-500">Nenhuma categoria encontrada.</p>'; return; }
-        categories.sort((a,b) => a.name.localeCompare(b.name)).forEach(cat => {
-            const item = document.createElement('div'); item.className = 'flex justify-between items-center p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg';
+        const listEl = document.getElementById('category-list');
+        listEl.innerHTML = ''; // Limpa a lista para evitar acumular itens
+
+        if (!categories || categories.length === 0) {
+            listEl.innerHTML = '<p class="text-center text-gray-500">Nenhuma categoria encontrada.</p>';
+            return;
+        }
+
+        // Usa um Map para garantir que cada nome de categoria seja único,
+        // preservando o objeto da categoria (com seu id e cor).
+        const uniqueCategoriesMap = new Map();
+        categories.forEach(cat => {
+            if (cat.name) {
+                uniqueCategoriesMap.set(cat.name, cat);
+            }
+        });
+
+        // Converte os valores do Map de volta para um array e ordena alfabeticamente
+        const uniqueCategories = Array.from(uniqueCategoriesMap.values());
+        uniqueCategories.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Renderiza a lista a partir do array de categorias únicas
+        uniqueCategories.forEach(cat => {
+            const item = document.createElement('div');
+            item.className = 'flex justify-between items-center p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg';
             item.innerHTML = `<div class="flex items-center gap-3"><span class="block w-5 h-5 rounded-full" style="background-color: ${cat.color}"></span><p class="font-semibold">${cat.name}</p></div><div class="flex gap-2"><button data-id="${cat.id}" class="edit-category-btn text-xs text-cyan-500 hover:underline">Editar</button><button data-id="${cat.id}" class="delete-category-btn text-xs text-red-500 hover:underline">Excluir</button></div>`;
             listEl.appendChild(item);
         });
@@ -5261,20 +5179,36 @@
     }
     
     function applyFilters() {
-        const description = document.getElementById('filter-description').value.toLowerCase();
-        const category = document.getElementById('filter-category').value;
-        const startDate = document.getElementById('filter-start-date').value;
-        const endDate = document.getElementById('filter-end-date').value;
-        const selectedTags = getSelectedFilterTags();
+    const description = document.getElementById('filter-description').value.toLowerCase();
+    const category = document.getElementById('filter-category').value;
+    const selectedMonth = document.getElementById('filter-month').value;
+    const selectedYear = document.getElementById('filter-year').value;
+    const selectedTags = getSelectedFilterTags();
 
-        let filteredTransactions = [...transactions];
-        if (description) { filteredTransactions = filteredTransactions.filter(t => t.description.toLowerCase().includes(description)); }
-        if (category) { filteredTransactions = filteredTransactions.filter(t => t.category === category); }
-        if (startDate) { filteredTransactions = filteredTransactions.filter(t => t.date >= startDate); }
-        if (endDate) { filteredTransactions = filteredTransactions.filter(t => t.date <= endDate); }
-        if (selectedTags.length > 0) { filteredTransactions = filteredTransactions.filter(t => selectedTags.some(tag => (t.tags || []).includes(tag))); }
-        renderTransactionsList(filteredTransactions);
+    let filteredTransactions = [...transactions];
+
+    if (description) {
+        filteredTransactions = filteredTransactions.filter(t => t.description.toLowerCase().includes(description));
     }
+    if (category) {
+        filteredTransactions = filteredTransactions.filter(t => t.category === category);
+    }
+    if (selectedTags.length > 0) {
+        filteredTransactions = filteredTransactions.filter(t => selectedTags.some(tag => (t.tags || []).includes(tag)));
+    }
+
+    // Nova lógica de filtragem por data
+    if (selectedYear && selectedMonth) {
+        const period = `${selectedYear}-${selectedMonth}`;
+        filteredTransactions = filteredTransactions.filter(t => t.date.startsWith(period));
+    } else if (selectedYear) {
+        filteredTransactions = filteredTransactions.filter(t => t.date.startsWith(selectedYear));
+    } else if (selectedMonth) {
+        filteredTransactions = filteredTransactions.filter(t => t.date.substring(5, 7) === selectedMonth);
+    }
+
+    renderTransactionsList(filteredTransactions);
+}
     
     // --- FUNÇÕES DE TAGS ---
     function getAllTags() {

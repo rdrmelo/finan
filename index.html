@@ -43,7 +43,7 @@
     </div>
 
     <div id="auth-section" class="hidden">
-        <div class="container flex items-center justify-center" style="min-height: 100vh;">
+        <div class="flex items-center justify-center" style="min-height: 100vh;">
             <div class="glass" style="width: 100%; max-width: 400px; padding: 40px;">
                 <div class="text-center mb-6">
                     <h1 class="text-3xl neon-text mb-4">FinanceX</h1>
@@ -311,12 +311,28 @@
                             </select>
                         </div>
                         <div>
-                            <label for="filter-start-date" class="block text-sm font-medium text-text-secondary">De</label>
-                            <input type="date" id="filter-start-date" class="mt-1 block w-full form-input">
+                            <label for="filter-month" class="block text-sm font-medium text-text-secondary">Mês</label>
+                            <select id="filter-month" class="form-select w-full p-3 rounded-lg bg-white/5 border border-white/10">
+                                <option value="">Todos</option>
+                                <option value="01">Janeiro</option>
+                                <option value="02">Fevereiro</option>
+                                <option value="03">Março</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Maio</option>
+                                <option value="06">Junho</option>
+                                <option value="07">Julho</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
                         </div>
                         <div>
-                            <label for="filter-end-date" class="block text-sm font-medium text-text-secondary">Até</label>
-                            <input type="date" id="filter-end-date" class="mt-1 block w-full form-input">
+                            <label for="filter-year" class="block text-sm font-medium text-text-secondary">Ano</label>
+                            <select id="filter-year" class="form-select w-full p-3 rounded-lg bg-white/5 border border-white/10">
+                                <option value="">Todos</option>
+                                </select>
                         </div>
                         <div class="flex space-x-2">
                             <button type="submit" class="btn btn-primary btn-dashboard w-full">Filtrar</button>
