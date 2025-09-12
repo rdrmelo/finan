@@ -5625,70 +5625,81 @@
     }
     
     async function generatePDF(periodType, periodValue, includeAI) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        let reportTitle = "Relatório Financeiro", fileName = "relatorio.pdf", filteredTransactions = [], periodText = "", monthYear = "";
-        
-        if (periodType === 'monthly') {
-            const [year, month] = periodValue.split('-');
-            monthYear = periodValue;
-            const monthName = new Date(periodValue + '-02').toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
-            periodText = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${year}`;
-            reportTitle = `Relatório Financeiro - ${periodText}`;
-            fileName = `FinanceX_Relatorio_${year}_${month}.pdf`;
-            filteredTransactions = transactions.filter(t => t.date.startsWith(periodValue));
-        } else {
-            periodText = `o ano de ${periodValue}`;
-            reportTitle = `Relatório Financeiro - Ano ${periodValue}`;
-            fileName = `FinanceX_Relatorio_${periodValue}.pdf`;
-            filteredTransactions = transactions.filter(t => t.date.startsWith(periodValue));
-        }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let reportTitle = "Relatório Financeiro", fileName = "relatorio.pdf", filteredTransactions = [], periodText = "", monthYear = "";
+    
+    if (periodType === 'monthly') {
+        const [year, month] = periodValue.split('-');
+        monthYear = periodValue;
+        const monthName = new Date(periodValue + '-02').toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
+        periodText = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${year}`;
+        reportTitle = `Relatório Financeiro - ${periodText}`;
+        fileName = `FinanceX_Relatorio_${year}_${month}.pdf`;
+        filteredTransactions = transactions.filter(t => t.date.startsWith(periodValue));
+    } else {
+        periodText = `o ano de ${periodValue}`;
+        reportTitle = `Relatório Financeiro - Ano ${periodValue}`;
+        fileName = `FinanceX_Relatorio_${periodValue}.pdf`;
+        filteredTransactions = transactions.filter(t => t.date.startsWith(periodValue));
+    }
 
-        const totalIncome = filteredTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-        const totalExpense = filteredTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-        const netResult = totalIncome - totalExpense;
-        const daysInPeriod = periodType === 'monthly' ? new Date(periodValue.split('-')[0], periodValue.split('-')[1], 0).getDate() : 365;
-        const dailyAvgExpense = totalExpense > 0 ? totalExpense / daysInPeriod : 0;
+    const totalIncome = filteredTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const totalExpense = filteredTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+    const netResult = totalIncome - totalExpense;
+    const daysInPeriod = periodType === 'monthly' ? new Date(periodValue.split('-')[0], periodValue.split('-')[1], 0).getDate() : 365;
+    const dailyAvgExpense = totalExpense > 0 ? totalExpense / daysInPeriod : 0;
 
-        // === CABEÇALHO PROFISSIONAL ===
-        // Fundo azul para o cabeçalho
-        doc.setFillColor(41, 98, 255); // Azul corporativo
-        doc.rect(0, 0, 210, 35, 'F');
-        
-        // Logo/Nome da empresa
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
-        doc.setFont(undefined, 'bold');
-        doc.text('FinanceX', 14, 20);
-        
-        // Título do relatório
-        doc.setFontSize(16);
-        doc.setFont(undefined, 'normal');
-        doc.text(reportTitle, 14, 28);
-        
-        // Data de geração (lado direito)
-        doc.setFontSize(10);
-        const currentDate = new Date().toLocaleDateString('pt-BR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-        doc.text(`Gerado em: ${currentDate}`, 210 - 14, 20, { align: 'right' });
-        doc.text(`Período: ${periodText}`, 210 - 14, 28, { align: 'right' });
-        
-        // Reset cor do texto
-        doc.setTextColor(0, 0, 0);
-        
-        // Calcular dados para análises avançadas
-        const previousPeriodTransactions = getPreviousPeriodTransactions(periodType, periodValue);
-        const previousIncome = previousPeriodTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-        const previousExpense = previousPeriodTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-        const incomeVariation = previousIncome > 0 ? ((totalIncome - previousIncome) / previousIncome * 100) : 0;
-        const expenseVariation = previousExpense > 0 ? ((totalExpense - previousExpense) / previousExpense * 100) : 0;
-        const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome * 100) : 0;
-        const financialScore = calculateReportFinancialScore(totalIncome, totalExpense, netResult, savingsRate, categoryData);
-        
-        let startY = 50;
+    // === CABEÇALHO PROFISSIONAL ===
+    // ... (code for the header remains the same) ...
+    doc.setFillColor(41, 98, 255); // Azul corporativo
+    doc.rect(0, 0, 210, 35, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont(undefined, 'bold');
+    doc.text('FinanceX', 14, 20);
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'normal');
+    doc.text(reportTitle, 14, 28);
+    doc.setFontSize(10);
+    const currentDate = new Date().toLocaleDateString('pt-BR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    doc.text(`Gerado em: ${currentDate}`, 210 - 14, 20, { align: 'right' });
+    doc.text(`Período: ${periodText}`, 210 - 14, 28, { align: 'right' });
+    doc.setTextColor(0, 0, 0);
+
+    // ✅ MOVED THIS BLOCK UP
+    const categoryData = categories.filter(c => c.name.toLowerCase() !== 'salário').map(cat => {
+        const transactionsInCategory = filteredTransactions.filter(t => t.category === cat.name && t.type === 'expense');
+        const totalSpent = transactionsInCategory.reduce((sum, t) => sum + t.amount, 0);
+        const budgetObj = getBudgetForCategory(cat.name, monthYear);
+        const budgetAmount = budgetObj ? budgetObj.amount : 0;
+        const status = budgetAmount > 0 ? (totalSpent <= budgetAmount ? '✅ OK' : '⚠️ Acima') : '-';
+        return {
+            name: cat.name,
+            spent: formatCurrency(totalSpent),
+            percentage: totalExpense > 0 ? `${((totalSpent / totalExpense) * 100).toFixed(1)}%` : '0.0%',
+            transactions: transactionsInCategory.length,
+            budget: budgetAmount > 0 ? formatCurrency(budgetAmount) : '-',
+            status: status
+        };
+    }).filter(c => c.transactions > 0).sort((a, b) => parseFloat(b.spent.replace(/[^0-9,-]+/g,"").replace(',','.')) - parseFloat(a.spent.replace(/[^0-9,-]+/g,"").replace(',','.')));
+    
+    // Calcular dados para análises avançadas
+    const previousPeriodTransactions = getPreviousPeriodTransactions(periodType, periodValue);
+    const previousIncome = previousPeriodTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const previousExpense = previousPeriodTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+    const incomeVariation = previousIncome > 0 ? ((totalIncome - previousIncome) / previousIncome * 100) : 0;
+    const expenseVariation = previousExpense > 0 ? ((totalExpense - previousExpense) / previousExpense * 100) : 0;
+    const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome * 100) : 0;
+    
+    // Now this line will work correctly
+    const financialScore = calculateReportFinancialScore(totalIncome, totalExpense, netResult, savingsRate, categoryData);
+    
+    let startY = 50;
         
         // === RESUMO EXECUTIVO ===
         doc.setFillColor(248, 250, 252); // Fundo cinza claro
@@ -5913,24 +5924,7 @@
         // Gráfico de pizza
         const chartImage = expenseChart.toBase64Image();
         doc.addImage(chartImage, 'PNG', 20, startY + 10, 75, 75);
-        
-        // Tabela de categorias com design melhorado
-        const categoryData = categories.filter(c => c.name.toLowerCase() !== 'salário').map(cat => {
-            const transactionsInCategory = filteredTransactions.filter(t => t.category === cat.name && t.type === 'expense');
-            const totalSpent = transactionsInCategory.reduce((sum, t) => sum + t.amount, 0);
-            const budgetObj = getBudgetForCategory(cat.name, monthYear);
-            const budgetAmount = budgetObj ? budgetObj.amount : 0;
-            const status = budgetAmount > 0 ? (totalSpent <= budgetAmount ? '✅ OK' : '⚠️ Acima') : '-';
-            return {
-                name: cat.name,
-                spent: formatCurrency(totalSpent),
-                percentage: totalExpense > 0 ? `${((totalSpent / totalExpense) * 100).toFixed(1)}%` : '0.0%',
-                transactions: transactionsInCategory.length,
-                budget: budgetAmount > 0 ? formatCurrency(budgetAmount) : '-',
-                status: status
-            };
-        }).filter(c => c.transactions > 0).sort((a, b) => parseFloat(b.spent.replace(/[^0-9,-]+/g,"").replace(',','.')) - parseFloat(a.spent.replace(/[^0-9,-]+/g,"").replace(',','.')));
-
+       
         doc.autoTable({
             head: [['Categoria', 'Gasto', '%', 'Qtd', 'Orçamento', 'Status']],
             body: categoryData.map(c => [c.name, c.spent, c.percentage, c.transactions, c.budget, c.status]),
