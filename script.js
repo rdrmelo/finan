@@ -1,5 +1,5 @@
  
- // Firebase imports and configuration
+// Firebase imports and configuration
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import {
             getAuth,
@@ -4814,7 +4814,14 @@
             const transactionsContainer = document.createElement('div');
             transactionsContainer.className = 'mt-1 space-y-1 overflow-y-auto';
             
-            dayTransactions.forEach(t => {
+            const maxVisible = 4;
+            const hasMoreTransactions = dayTransactions.length > maxVisible;
+            
+            // Mostrar apenas as primeiras 4 transações inicialmente
+            const visibleTransactions = dayTransactions.slice(0, maxVisible);
+            const hiddenTransactions = dayTransactions.slice(maxVisible);
+            
+            visibleTransactions.forEach(t => {
                 const transactionEl = document.createElement('div');
                 transactionEl.dataset.id = t.id;
                 transactionEl.className = `p-1 rounded-md text-xs cursor-pointer truncate ${t.type === 'income' ? 'bg-green-100 text-green-800 dark:bg-green-900/70 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/70 dark:text-red-200'}`;
@@ -4822,6 +4829,43 @@
                 transactionEl.title = `${t.description} (${formatCurrency(t.amount)})`;
                 transactionsContainer.appendChild(transactionEl);
             });
+            
+            // Container para transações ocultas
+            if (hasMoreTransactions) {
+                const hiddenContainer = document.createElement('div');
+                hiddenContainer.className = 'hidden-transactions hidden space-y-1';
+                
+                hiddenTransactions.forEach(t => {
+                    const transactionEl = document.createElement('div');
+                    transactionEl.dataset.id = t.id;
+                    transactionEl.className = `p-1 rounded-md text-xs cursor-pointer truncate ${t.type === 'income' ? 'bg-green-100 text-green-800 dark:bg-green-900/70 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/70 dark:text-red-200'}`;
+                    transactionEl.textContent = t.description;
+                    transactionEl.title = `${t.description} (${formatCurrency(t.amount)})`;
+                    hiddenContainer.appendChild(transactionEl);
+                });
+                
+                transactionsContainer.appendChild(hiddenContainer);
+                
+                // Botão "Ver mais"
+                const toggleButton = document.createElement('button');
+                toggleButton.className = 'toggle-transactions-btn w-full mt-1 px-2 py-1 text-xs bg-blue-500/20 text-blue-300 border border-blue-400/30 rounded hover:bg-blue-500/30 transition-colors';
+                toggleButton.textContent = `+${hiddenTransactions.length} mais`;
+                
+                toggleButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isExpanded = !hiddenContainer.classList.contains('hidden');
+                    
+                    if (isExpanded) {
+                        hiddenContainer.classList.add('hidden');
+                        toggleButton.textContent = `+${hiddenTransactions.length} mais`;
+                    } else {
+                        hiddenContainer.classList.remove('hidden');
+                        toggleButton.textContent = 'Recolher';
+                    }
+                });
+                
+                transactionsContainer.appendChild(toggleButton);
+            }
             dayCell.appendChild(transactionsContainer);
             grid.appendChild(dayCell);
         }
