@@ -1,10 +1,10 @@
 import { initAuth } from './modules/auth.js';
 import { loadLocalData, saveLocalData } from './services/storage.js';
 import { updateDashboardUI, switchPage, openModal, closeAllModals, modals, updateCategorySuggestions } from './components/dashboard.js';
-import { addTransaction, updateTransaction, deleteTransaction } from './services/transactions.js';
-import { addCategory, updateCategory, deleteCategory } from './services/categories.js';
-import { setBudget } from './services/budgets.js';
-import { addFundsToGoal, deleteGoal } from './services/goals.js';
+import { addTransaction, updateTransaction, deleteTransaction, subscribeToTransactions } from './services/transactions.js';
+import { addCategory, updateCategory, deleteCategory, subscribeToCategories } from './services/categories.js';
+import { setBudget, subscribeToBudgets } from './services/budgets.js';
+import { addFundsToGoal, deleteGoal, subscribeToGoals } from './services/goals.js';
 import { formatCurrency } from './utils/formatters.js';
 
 let state = {
@@ -16,6 +16,8 @@ let state = {
     budgets: []
 };
 
+let unsubscribeListeners = [];
+
 document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.add('dark');
 
@@ -23,13 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
         (user) => {
             console.log('Usuário logado:', user.email);
             state.user = user;
-            loadData();
+
+            // 1. Carregar dados locais primeiro (para cache/offline imediato)
+            const localData = loadLocalData(user);
+            state = { ...state, ...localData };
+            refreshUI();
+
+            // 2. Conectar ao Firestore para atualizações em tempo real
+            setupFirestoreListeners(user);
+
             initializeUI();
         },
         () => {
             console.log('Usuário deslogado');
             state.user = null;
-            // Redirect or show login
+            // Limpar listeners antigos
+            unsubscribeListeners.forEach(unsub => unsub());
+            unsubscribeListeners = [];
+            // Redirect or show login logic is handled in auth.js via UI toggle
         }
     );
 
@@ -41,10 +54,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function loadData() {
-    const data = loadLocalData(state.user);
-    state = { ...state, ...data };
-    refreshUI();
+function setupFirestoreListeners(user) {
+    // Limpar listeners anteriores se existirem
+    unsubscribeListeners.forEach(unsub => unsub());
+    unsubscribeListeners = [];
+
+    // Transactions Listener
+    const unsubTransactions = subscribeToTransactions(user, (transactions) => {
+        state.transactions = transactions;
+        saveLocalData(state.user, state);
+        refreshUI();
+    });
+    unsubscribeListeners.push(unsubTransactions);
+
+    // Categories Listener
+    const unsubCategories = subscribeToCategories(user, (categories) => {
+        state.categories = categories;
+        saveLocalData(state.user, state);
+        refreshUI();
+    });
+    unsubscribeListeners.push(unsubCategories);
+
+    // Goals Listener
+    const unsubGoals = subscribeToGoals(user, (goals) => {
+        state.goals = goals;
+        saveLocalData(state.user, state);
+        refreshUI();
+    });
+    unsubscribeListeners.push(unsubGoals);
+
+    // Budgets Listener
+    const unsubBudgets = subscribeToBudgets(user, (budgets) => {
+        state.budgets = budgets;
+        saveLocalData(state.user, state);
+        refreshUI();
+    });
+    unsubscribeListeners.push(unsubBudgets);
+
+    // Note: Add listeners for recurringTemplates if needed
 }
 
 function refreshUI() {
@@ -129,19 +176,10 @@ function setupForms() {
 
             if (id) {
                 await updateTransaction(state.user, id, data);
-                // Update local state (simplified, ideally re-fetch or exact update)
-                const index = state.transactions.findIndex(t => t.id === id);
-                if (index !== -1) state.transactions[index] = { ...state.transactions[index], ...data };
             } else {
                 await addTransaction(state.user, data);
-                // We need to fetch ID or add optimistically. For now, reload data
-                // Optimistic add (with temp ID) or reload:
-                // Ideally loadData() again from storage/cache
-                state.transactions.push({ ...data, id: Date.now().toString() }); // Temporary
             }
-
-            saveLocalData(state.user, state);
-            refreshUI();
+            // State updates will flow via Firestore listener
             closeAllModals();
         });
     }
@@ -155,9 +193,7 @@ function setupForms() {
         if (btn.classList.contains('delete-btn')) {
             if (confirm('Excluir transação?')) {
                 deleteTransaction(state.user, id);
-                state.transactions = state.transactions.filter(t => t.id !== id);
-                saveLocalData(state.user, state);
-                refreshUI();
+                // State updates will flow via Firestore listener
             }
         }
     });

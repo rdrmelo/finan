@@ -1,5 +1,5 @@
 import { db } from '../config/firebase.js';
-import { collection, doc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, setDoc, addDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { showNotification } from '../utils/ui.js';
 import { handleOfflineAction } from './offline.js';
 import { saveLocalData } from './storage.js';
@@ -33,10 +33,20 @@ export async function setBudget(user, categoryName, amount, monthYear, budgets, 
         handleOfflineAction('Orçamento', 'budgets', budgetData);
     }
 
-    // Save locally
-    saveLocalData(user, { ...allData, budgets });
+    // Save locally (optional, but good for immediate feedback if not using listener immediately)
+    // Actually listener will update local state eventually
 }
 
 export function getBudgetForCategory(budgets, categoryName, monthYear) {
     return budgets.find(b => b.categoryName === categoryName && b.monthYear === monthYear);
+}
+
+export function subscribeToBudgets(user, callback) {
+    if (!user) return () => { };
+
+    const q = query(collection(db, `users/${user.uid}/budgets`));
+    return onSnapshot(q, (snapshot) => {
+        const budgets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(budgets);
+    });
 }

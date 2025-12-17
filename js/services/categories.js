@@ -1,5 +1,5 @@
 import { db } from '../config/firebase.js';
-import { collection, doc, setDoc, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, setDoc, writeBatch, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { showNotification } from '../utils/ui.js';
 
 export async function addCategory(user, categoryData) {
@@ -92,4 +92,35 @@ export function getCategoryColor(categories, categoryName) {
     if (!categories || categories.length === 0) return '#6b7280';
     const category = categories.find(c => c.name === categoryName);
     return category ? category.color : '#6b7280';
+}
+
+export async function initializeDefaultCategories(user) {
+    if (!user) return;
+    const defaultCategories = [
+        { name: 'Alimentação', color: '#f97316' }, { name: 'Moradia', color: '#3b82f6' },
+        { name: 'Transporte', color: '#10b981' }, { name: 'Lazer', color: '#8b5cf6' },
+        { name: 'Saúde', color: '#ef4444' }, { name: 'Salário', color: '#22c55e' },
+        { name: 'Outros', color: '#6b7280' }
+    ];
+    const batch = writeBatch(db);
+    defaultCategories.forEach(cat => {
+        const docRef = doc(collection(db, `users/${user.uid}/categories`));
+        batch.set(docRef, cat);
+    });
+    await batch.commit();
+}
+
+export function subscribeToCategories(user, callback) {
+    if (!user) return () => { };
+
+    const q = query(collection(db, `users/${user.uid}/categories`));
+    return onSnapshot(q, (snapshot) => {
+        const categories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        if (categories.length === 0) {
+            initializeDefaultCategories(user);
+        }
+
+        callback(categories);
+    });
 }

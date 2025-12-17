@@ -1,5 +1,5 @@
 import { db } from '../config/firebase.js';
-import { collection, doc, setDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, setDoc, addDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { showNotification } from '../utils/ui.js';
 import { handleOfflineAction } from './offline.js';
 
@@ -54,4 +54,14 @@ export async function deleteTransaction(user, id) {
 
 export function filterTransactionsByMonth(transactions, monthYear) {
     return transactions.filter(t => t.date.startsWith(monthYear));
+}
+
+export function subscribeToTransactions(user, callback) {
+    if (!user) return () => { };
+
+    const q = query(collection(db, `users/${user.uid}/transactions`));
+    return onSnapshot(q, (snapshot) => {
+        const transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(transactions);
+    });
 }

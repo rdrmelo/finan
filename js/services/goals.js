@@ -1,5 +1,5 @@
 import { db } from '../config/firebase.js';
-import { doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, setDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { showNotification } from '../utils/ui.js';
 import { handleOfflineAction } from './offline.js';
 import { addTransaction } from './transactions.js';
@@ -51,4 +51,14 @@ export async function addFundsToGoal(user, goalId, amount, goals) {
             throw error;
         }
     }
+}
+
+export function subscribeToGoals(user, callback) {
+    if (!user) return () => { };
+
+    const q = query(collection(db, `users/${user.uid}/goals`));
+    return onSnapshot(q, (snapshot) => {
+        const goals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(goals);
+    });
 }
