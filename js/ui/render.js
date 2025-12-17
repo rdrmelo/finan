@@ -109,7 +109,7 @@ export function renderTransactionsList(transactionsToRender, categories) {
     });
 }
 
-function getContrastingTextColor(hexColor) {
+export function getContrastingTextColor(hexColor) {
     if (!hexColor) return '#000000';
     const r = parseInt(hexColor.substr(1, 2), 16);
     const g = parseInt(hexColor.substr(3, 2), 16);
