@@ -65,7 +65,8 @@ async function initApp() {
         if (user) {
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('user-name').textContent = user.displayName || 'Usuário';
+            const welcomeEl = document.getElementById('welcome-message');
+            if (welcomeEl) welcomeEl.textContent = `Olá, ${user.displayName || 'Investidor'}! Sua vida financeira em um só lugar.`;
 
             await initializeAppLogic(user);
         } else {
