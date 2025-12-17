@@ -15,6 +15,12 @@ import {
 } from './charts.js';
 import { formatCurrency } from '../utils/formatters.js';
 
+export function updateDashboard(transactions, goals, budgets, recurringTemplates) {
+    // Executive Dashboard (Charts & KPIs)
+    // Note: budgets is not currently used in executive dashboard
+    updateExecutiveDashboard(transactions, goals, recurringTemplates);
+}
+
 export function updateExecutiveDashboard(transactions, goals, recurringTemplates) {
     try {
         if (!transactions) return;
