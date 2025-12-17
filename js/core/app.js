@@ -35,7 +35,7 @@ import {
     openBudgetModal
 } from '../ui/modals.js';
 import { openAIAdvisor } from '../ui/ai-advisor.js';
-import { validatePassword, checkFormValidity } from '../utils/validators.js';
+import { validatePassword, validateEmail, validateFullName } from '../utils/validators.js';
 import { formatCurrency } from '../utils/formatters.js';
 
 // --- State ---
@@ -232,19 +232,56 @@ function setupGlobalEventListeners() {
 
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
+        // Real-time validation listeners
+        const inputs = ['register-fullname', 'register-email', 'register-password', 'register-confirm-password'];
+        inputs.forEach(id => {
+            document.getElementById(id)?.addEventListener('input', checkFormValidity);
+        });
+
+        // Toggle password visibility
+        document.getElementById('toggle-password')?.addEventListener('click', () => {
+            const input = document.getElementById('register-password');
+            if (input) {
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+        });
+
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // ... validation logic ...
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            const name = document.getElementById('reg-name').value;
+
+            if (!checkFormValidity()) {
+                showNotification('Por favor, corrija os erros no formulário.', 'error');
+                return;
+            }
+
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const name = document.getElementById('register-fullname').value;
 
             try {
+                // Show loading state
+                const btn = document.getElementById('register-submit-btn');
+                const originalText = document.getElementById('register-btn-text');
+                const loadingText = document.getElementById('register-btn-loading');
+
+                if (btn) btn.disabled = true;
+                if (originalText) originalText.classList.add('hidden');
+                if (loadingText) loadingText.classList.remove('hidden');
+
                 const user = await register(email, password);
                 await updateUserProfile(user, { displayName: name });
-                // auto login triggers auth change
+
+                showNotification('Conta criada com sucesso!', 'success');
+                // Auto login happens via onAuthStateChanged
             } catch (error) {
                 showNotification(error.message, 'error');
+                const btn = document.getElementById('register-submit-btn');
+                if (btn) btn.disabled = false;
+                // Reset button text
+                const originalText = document.getElementById('register-btn-text');
+                const loadingText = document.getElementById('register-btn-loading');
+                if (originalText) originalText.classList.remove('hidden');
+                if (loadingText) loadingText.classList.add('hidden');
             }
         });
     }
@@ -538,6 +575,126 @@ function setupFormSubmissions() {
             }
         } else {
             showNotification('Selecione o período.', 'warning');
+        }
+    });
+}
+
+
+// --- Helper Functions for Validation ---
+
+function checkFormValidity() {
+    const fullNameInput = document.getElementById('register-fullname');
+    const emailInput = document.getElementById('register-email');
+    const passwordInput = document.getElementById('register-password');
+    const confirmPasswordInput = document.getElementById('register-confirm-password');
+    const btn = document.getElementById('register-submit-btn');
+
+    if (!fullNameInput || !emailInput || !passwordInput || !confirmPasswordInput) return false;
+
+    const name = fullNameInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+
+    const nameValid = validateFullName(name);
+    const emailValid = validateEmail(email);
+    const passwordValid = validatePassword(password);
+    const passwordsMatch = password === confirmPassword && password.length > 0;
+
+    // Update UI for Name
+    updateFieldStatus('fullname', nameValid.valid, nameValid.message);
+
+    // Update UI for Email
+    updateFieldStatus('email', emailValid.valid, emailValid.message);
+
+    // Update UI for Password
+    updatePasswordUI(passwordValid); // Custom UI for password strength
+
+    // Update UI for Confirm Password
+    const confirmStatus = document.getElementById('confirm-password-status');
+    const confirmError = document.getElementById('confirm-password-error');
+    if (confirmPassword.length > 0) {
+        if (passwordsMatch) {
+            confirmStatus.textContent = '✓';
+            confirmStatus.className = 'text-green-400';
+            confirmError.classList.add('hidden');
+        } else {
+            confirmStatus.textContent = '✗';
+            confirmStatus.className = 'text-red-400';
+            confirmError.textContent = 'Senhas não conferem';
+            confirmError.classList.remove('hidden');
+        }
+    } else {
+        confirmStatus.textContent = '';
+        confirmError.classList.add('hidden');
+    }
+
+    const isValid = nameValid.valid && emailValid.valid && passwordValid.score >= 4 && passwordsMatch;
+
+    if (btn) btn.disabled = !isValid;
+
+    return isValid;
+}
+
+function updateFieldStatus(fieldPrefix, isValid, message) {
+    const statusEl = document.getElementById(`${fieldPrefix}-status`);
+    const errorEl = document.getElementById(`${fieldPrefix}-error`);
+
+    if (!statusEl || !errorEl) return;
+
+    if (isValid) {
+        statusEl.textContent = '✓';
+        statusEl.className = 'text-green-400';
+        errorEl.classList.add('hidden');
+    } else {
+        // Only show error if not empty (user started typing)
+        // Or if explicit validation failed
+        if (message) {
+            statusEl.textContent = '✗';
+            statusEl.className = 'text-red-400';
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        } else {
+            statusEl.textContent = '';
+            errorEl.classList.add('hidden');
+        }
+    }
+}
+
+function updatePasswordUI(validation) {
+    const { criteria, score } = validation;
+    const text = document.getElementById('password-strength-text');
+    const bars = [1, 2, 3, 4].map(i => document.getElementById(`strength-bar-${i}`));
+
+    // Update bars
+    bars.forEach((bar, idx) => {
+        if (!bar) return;
+        if (idx < score) {
+            bar.className = `h-1 flex-1 rounded ${score <= 2 ? 'bg-red-500' :
+                    score <= 3 ? 'bg-yellow-500' : 'bg-green-500'
+                }`;
+        } else {
+            bar.className = 'h-1 flex-1 bg-gray-600 rounded';
+        }
+    });
+
+    // Update requirements list
+    const reqs = {
+        'req-length': criteria.length,
+        'req-uppercase': criteria.uppercase,
+        'req-lowercase': criteria.lowercase,
+        'req-number': criteria.number,
+        'req-special': criteria.special
+    };
+
+    Object.entries(reqs).forEach(([id, met]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            const span = el.querySelector('span:first-child');
+            if (span) {
+                span.textContent = met ? '✓' : '○';
+                el.className = met ? 'flex items-center space-x-2 text-green-400' : 'flex items-center space-x-2 text-gray-400';
+            }
         }
     });
 }
