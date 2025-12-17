@@ -74,6 +74,12 @@ async function initApp() {
             document.getElementById('main-app').classList.add('hidden');
             // Clear data?
         }
+
+        // Hide splash screen
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+            splash.classList.add('hidden');
+        }
     });
 }
 
