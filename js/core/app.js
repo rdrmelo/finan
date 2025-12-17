@@ -63,14 +63,14 @@ async function initApp() {
     subscribeToAuthChanges(async (user) => {
         currentUser = user;
         if (user) {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-name').textContent = user.displayName || 'Usuário';
 
             await initializeAppLogic(user);
         } else {
-            document.getElementById('auth-screen').classList.remove('hidden');
-            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
             // Clear data?
         }
     });
@@ -220,8 +220,8 @@ function setupGlobalEventListeners() {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
             try {
                 await login(email, password);
             } catch (error) {
@@ -285,6 +285,19 @@ function setupGlobalEventListeners() {
             }
         });
     }
+
+    // Auth Toggles
+    document.getElementById('show-register-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('login-form-container').classList.add('hidden');
+        document.getElementById('register-form-container').classList.remove('hidden');
+    });
+
+    document.getElementById('show-login-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('register-form-container').classList.add('hidden');
+        document.getElementById('login-form-container').classList.remove('hidden');
+    });
 
     document.getElementById('logout-btn')?.addEventListener('click', () => logout());
 
@@ -436,8 +449,13 @@ function setupGlobalEventListeners() {
 }
 
 function handleNavigation(targetId) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    document.getElementById(targetId).classList.remove('hidden');
+    const pages = ['dashboard-page', 'executive-page', 'budgets-page', 'calendar-page', 'goals-page', 'settings-page'];
+    pages.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+
+    document.getElementById(targetId)?.classList.remove('hidden');
 
     // Specific view logic
     if (targetId === 'calendar-view') {
@@ -671,7 +689,7 @@ function updatePasswordUI(validation) {
         if (!bar) return;
         if (idx < score) {
             bar.className = `h-1 flex-1 rounded ${score <= 2 ? 'bg-red-500' :
-                    score <= 3 ? 'bg-yellow-500' : 'bg-green-500'
+                score <= 3 ? 'bg-yellow-500' : 'bg-green-500'
                 }`;
         } else {
             bar.className = 'h-1 flex-1 bg-gray-600 rounded';
